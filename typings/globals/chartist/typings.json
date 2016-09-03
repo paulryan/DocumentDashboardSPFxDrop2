@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/b50ccc2baf58b675507b58a5e8c26706db4fc606/chartist/chartist.d.ts",
+    "raw": "registry:dt/chartist#0.9.5+20160619034222",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/b50ccc2baf58b675507b58a5e8c26706db4fc606/chartist/chartist.d.ts"
+  }
+}

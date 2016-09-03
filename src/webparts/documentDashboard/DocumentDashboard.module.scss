@@ -1,0 +1,42 @@
+//@import "fabric.components.min.css";
+
+//@import "chartist.min.css";
+
+// @import "~chartist/dist/scss/settings/_chartist-settings.scss";
+// @import "~chartist/dist/scss/chartist.scss";
+
+// Use import when this is working...
+
+//@import "~office-ui-fabric/dist/sass/Fabric.Components";
+
+
+.msTableCellNoWrap {
+    white-space: nowrap;
+}
+
+.msTableOverflow {
+  max-width: 100%;
+  overflow: auto;
+  padding-top: 15px;
+}
+
+.msTablePagerWrapper {
+  text-align: center;
+}
+
+.msTablePager:visited {
+  color: inherit !important;
+}
+
+.msTableHeaderCell:visited {
+  color: inherit !important;
+  text-decoration: none;
+}
+
+.autoCursor {
+  cursor: auto;
+}
+
+.floatRight {
+  float: right;
+}

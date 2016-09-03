@@ -1,0 +1,5 @@
+{
+  "globalDependencies": {
+    "chartist": "registry:dt/chartist#0.9.5+20160619034222"
+  }
+}

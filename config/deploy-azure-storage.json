@@ -1,0 +1,6 @@
+{
+  "workingDir": "./temp/deploy/",
+  "account": "<!-- STORAGE ACCOUNT NAME -->",
+  "container": "document-dashboard",
+  "accessKey": "<!-- ACCESS KEY -->"
+}
