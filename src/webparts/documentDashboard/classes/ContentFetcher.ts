@@ -94,10 +94,10 @@ export default class ContentFetcher implements ISecurableObjectStore {
 
     let scopeFql: string = "";
     if (self.props.scope === SPScope.SiteCollection) {
-      scopeFql = "SiteId:" + EnsureBracesOnGuidString(self.props.context.pageContext.site.id.toString());
+      scopeFql = " SiteId:" + EnsureBracesOnGuidString(self.props.context.pageContext.site.id.toString());
     }
     else if (self.props.scope === SPScope.Site) {
-      scopeFql = "WebId:" + EnsureBracesOnGuidString(self.props.context.pageContext.web.id.toString());
+      scopeFql = " WebId:" + EnsureBracesOnGuidString(self.props.context.pageContext.web.id.toString());
     }
     else if (self.props.scope === SPScope.Tenant) {
       // do nothing
@@ -114,7 +114,7 @@ export default class ContentFetcher implements ISecurableObjectStore {
       selectPropsArray.push(this.props.crawlTimeManagedPropertyName);
     }
 
-    const queryText: string = "querytext='" + scopeFql + " " +  modeFql + "'";
+    const queryText: string = "querytext='" + modeFql + scopeFql + "'";
     const selectProps: string = "selectproperties='" + selectPropsArray.join(",") + "'";
     const finalUri: string = baseUri + "?" + queryText + "&" + selectProps;
 
@@ -134,6 +134,7 @@ export default class ContentFetcher implements ISecurableObjectStore {
 
     const headers: Headers = new Headers();
     headers.append("odata-version", "3.0");
+    headers.append("accept", "application/json;odata=nometadata");
     this.props.context.httpClient.get(pagedUri, { headers: headers })
       .then((r1: Response) => {
         this.log.logInfo("Recieved response from " + pagedUri);
@@ -193,17 +194,22 @@ export default class ContentFetcher implements ISecurableObjectStore {
             const sharedWith: string[] = [];
             const sharedBy: string[] = [];
             if (doc.SharedWithDetails) {
-              const sharedWithDetails: any = JSON.parse(doc.SharedWithDetails);
-              for (const sharedWithUser in sharedWithDetails) {
-                if (sharedWithDetails.hasOwnProperty(sharedWithUser)) {
-                  const sharedWithUserDisplayName: string = ParseDisplayNameFromExtUserAccountName(sharedWithUser);
-                  sharedWith.push(sharedWithUserDisplayName);
-                  const sharedByUser: string = sharedWithDetails[sharedWithUser]["LoginName"];
-                  sharedBy.push(sharedByUser);
+              try {
+                const sharedWithDetails: any = JSON.parse(doc.SharedWithDetails);
+                for (const sharedWithUser in sharedWithDetails) {
+                  if (sharedWithDetails.hasOwnProperty(sharedWithUser)) {
+                    const sharedWithUserDisplayName: string = ParseDisplayNameFromExtUserAccountName(sharedWithUser);
+                    sharedWith.push(sharedWithUserDisplayName);
+                    const sharedByUser: string = sharedWithDetails[sharedWithUser]["LoginName"];
+                    sharedBy.push(sharedByUser);
+                  }
                 }
+                sharedWith.sort();
+                sharedBy.sort();
               }
-              sharedWith.sort();
-              sharedBy.sort();
+              catch (e) {
+                this.log.logError("Failed to parse SharedWithDetails", e.message);
+              }
             }
 
             // Parse CrawlTime if managed property provided and populated

@@ -30,15 +30,15 @@ export default class ChartistLine extends ChartistBase {
     // const labelDelta: number = (highLabal - lowLabel); // * 0.1;
 
     const options: Chartist.ILineChartOptions = {
-      axisX: {
-        labelOffset: {
-          x: 20,
-          y: 0
-        }
-        // low: lowLabel - labelDelta,
-        // high: highLabal + labelDelta
-      },
+      // axisX: {
+      //   type: Chartist.AutoScaleAxis,
+      //   labelOffset: {
+      //       x: 20,
+      //       y: 0
+      //     }
+      // },
       axisY: {
+        type: Chartist.FixedScaleAxis,
         low: 0,
         onlyInteger: true
       },
