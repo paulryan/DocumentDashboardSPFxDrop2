@@ -1,34 +1,21 @@
 {
-  // Display errors as warnings
-  "displayAsWarning": true,
-  // The TSLint task may have been configured with several custom lint rules
-  // before this config file is read (for example lint rules from the tslint-microsoft-contrib
-  // project). If true, this flag will deactivate any of these rules.
-  "removeExistingRules": true,
-  // When true, the TSLint task is configured with some default TSLint "rules.":
-  "useDefaultConfigAsBase": false,
-  // Since removeExistingRules=true and useDefaultConfigAsBase=false, there will be no lint rules
-  // which are active, other than the list of rules below.
-  "lintConfig": {
-    // Opt-in to Lint rules which help to eliminate bugs in JavaScript
     "rules": {
 
-      // This section of rules is not supported by the tslint VS Code extension
-      "export-name": false,
-      "no-duplicate-case": true,
-      "no-function-expression": true,
-      "no-unnecessary-semicolons": true,
-      "no-unused-imports": true,
-      "no-use-before-declare": true,
-      "no-with-statement": true,
-      "use-named-parameter": true,
-      "valid-typeof": true,
-      "prefer-const": true,
-      "a11y-role": true,
-      "member-ordering": [false],
-      "no-constant-condition": [false],
+      // Following not supported by tslint - breaks the linter!
+      // "export-name": false,
+      // "no-duplicate-case": true,
+      // "no-function-expression": true,
+      // "no-unnecessary-semicolons": true,
+      // "no-unused-imports": true,
+      // "no-use-before-declare": true,
+      // "no-with-statement": true,
+      // "use-named-parameter": true,
+      // "valid-typeof": true,
+      // "prefer-const": true,
+      // "a11y-role": true,
+      // "member-ordering": [false],
+      // "no-constant-condition": [false],
 
-      // This section of rules *is* supported by the tslint VS Code extension
       "class-name": false,
       "forin": false,
       "label-position": false,
@@ -68,7 +55,7 @@
       "variable-name": false,
       "whitespace": [false],
       "no-constructor-vars": true,
-      "comment-format": [false], // [true, "check-space"],
+      "comment-format": [true, "check-space"],
       "curly": false,
       "indent": [false],
       "interface-name": [true, "always-prefix"],
@@ -83,11 +70,10 @@
       "no-trailing-whitespace": false,
       "no-var-keyword": true,
       "one-line": [true, "check-open-brace"],
-      "quotemark": [true, "avoid-escape"],
+      "quotemark": [true, "double", "jsx-double", "avoid-escape"],
       "radix": false,
       "triple-equals": true,
       "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
       "object-literal-sort-keys": false
     }
-  }
 }

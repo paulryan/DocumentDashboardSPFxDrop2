@@ -20,14 +20,14 @@ export class Logger {
   private _log (level: string, message: string, isError: boolean = false): void {
     if (console && typeof console.log === "function") {
       const logMsg: string = `${level}:  ${this.currentContext}:  ${message}`;
+      /* tslint:disable */
       if (isError) {
         console.error(logMsg);
       }
       else {
-        /* tslint:disable */
         console.log(logMsg);
-        /* tslint:enable */
       }
+      /* tslint:enable */
     }
   }
 }
