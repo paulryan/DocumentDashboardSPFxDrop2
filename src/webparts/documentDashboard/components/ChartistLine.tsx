@@ -34,7 +34,7 @@ export default class ChartistLine extends ChartistBase {
     // Line graphs take an array of series as they support many lines
     data.series = [ data.series ];
 
-    let line: any = new Chartist.Line("#chartist", data, options, this.responsiveOptions);
+    let line: any = new Chartist.Line(this.getTargetElement(), data, options, this.responsiveOptions);
     // tslint ignore..
     line = line;
   }

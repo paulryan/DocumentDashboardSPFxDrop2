@@ -39,10 +39,10 @@ export interface IDocumentDashboardProps {
   tableColumnsShowCrawledTime: boolean;
   tableColumnsShowSiteTitle: boolean;
   tableColumnsShowCreatedByModifiedBy: boolean;
-
   chartAxis: ChartAxis;
   tablePageSize: number;
   chartAxisOrder: ChartAxisOrder;
+  domElement: HTMLElement;
 }
 
 export interface IDocumentDashboardState {
@@ -122,6 +122,7 @@ export interface IChart {
   columnIndexToGroupUpon: number;
   maxGroups: number;
   chartAxisOrder: ChartAxisOrder;
+  domElement: HTMLElement;
 }
 
 export interface IChartItem {

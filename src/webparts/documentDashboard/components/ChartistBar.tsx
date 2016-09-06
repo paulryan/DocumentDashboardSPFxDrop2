@@ -33,7 +33,7 @@ export default class ChartistBar extends ChartistBase {
     // Bar graphs take an array of series as they support many bars
     data.series = [ data.series ];
 
-    let bar: any = new Chartist.Bar("#chartist", data, options, this.responsiveOptions);
+    let bar: any = new Chartist.Bar(this.getTargetElement(), data, options, this.responsiveOptions);
     // tslint ignore..
     bar = bar;
   }

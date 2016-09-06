@@ -307,6 +307,7 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
       items: dataPoints,
       maxGroups: maxGroups,
       chartAxisOrder: this.props.chartAxisOrder,
+      domElement: this.props.domElement,
       columnIndexToGroupUpon: 0 // As there is only a single column in the data we return
     };
   }

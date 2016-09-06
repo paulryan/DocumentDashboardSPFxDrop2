@@ -27,9 +27,10 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
   ];
 
   public render(): JSX.Element {
+
       return (
         <div className={styles.ctSeries}>
-        <div id="chartist" className="ct-chart ct-perfect-fourth"></div>
+        <div className="ct-chart ct-perfect-fourth"></div>
         </div>
       );
       // ct-golden-section
@@ -42,6 +43,16 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
   }
 
   public abstract renderChart(): void;
+
+  protected getTargetElement(): Element {
+    const els: NodeListOf<Element> = this.props.domElement.getElementsByClassName("ct-chart");
+    if (els.length === 1) {
+      return els[0];
+    }
+    else {
+      throw new Error("Failed to find the Chartist container DOM element");
+    }
+  }
 
   protected getChartistData(): Chartist.IChartistData {
     // Create a object of chart items

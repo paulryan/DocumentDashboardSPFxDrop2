@@ -34,7 +34,7 @@ export default class ChartistPie extends ChartistBase {
       }
     };
 
-    let pie: any = new Chartist.Pie("#chartist", data, options, this.responsiveOptions);
+    let pie: any = new Chartist.Pie(this.getTargetElement(), data, options, this.responsiveOptions);
     // tslint ignore..
     pie = pie;
   }

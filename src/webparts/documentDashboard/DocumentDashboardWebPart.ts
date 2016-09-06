@@ -91,7 +91,8 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
       tableColumnsShowCreatedByModifiedBy: this.properties.tableColumnsShowCreatedByModifiedBy,
       chartAxis: this.properties.chartAxis,
       tablePageSize: this.properties.tablePageSize,
-      chartAxisOrder: this.properties.chartAxisOrder
+      chartAxisOrder: this.properties.chartAxisOrder,
+      domElement: this.domElement
     });
 
     // Build the control!
