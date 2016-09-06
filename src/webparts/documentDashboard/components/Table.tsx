@@ -8,6 +8,11 @@ import {
 } from "../classes/Interfaces";
 
 import {
+  TableCell,
+  TableCellHeader
+} from "./TableCell";
+
+import {
   FocusZone,
   FocusZoneDirection,
   KeyCodes,
@@ -27,6 +32,8 @@ export default class Table extends React.Component<ITable, ITable> {
   private minPageStartIndex: number = 0;
   private pageCount: number = 1;
   private columnCount: number = 0;
+  private hasNextPage: boolean;
+  private hasPrevPage: boolean;
 
   constructor() {
     super();
@@ -47,17 +54,6 @@ export default class Table extends React.Component<ITable, ITable> {
       this.columnCount = this.props.rows[0].cells.length;
     }
 
-    // Ensure props are in range
-    // if (this.props.pageSize < 1) {
-    //   this.props.pageSize = 1;
-    // }
-    // if (this.props.pageStartIndex < this.minPageStartIndex) {
-    //   this.props.pageSize = this.minPageStartIndex;
-    // }
-    // if (this.props.pageStartIndex > this.maxPageStartIndex) {
-    //   this.props.pageSize = this.maxPageStartIndex;
-    // }
-
     // Support initial sort
     if (this.props.currentSort >= 0 && this.props.currentSort < this.columnCount) {
       this.sortOnColumnInternal(this.props);
@@ -67,6 +63,9 @@ export default class Table extends React.Component<ITable, ITable> {
   }
 
   public render(): JSX.Element {
+      this.hasNextPage = (this.state.pageStartIndex + this.state.pageSize <= this.maxPageStartIndex);
+      this.hasPrevPage = (this.state.pageStartIndex - this.state.pageSize >= this.minPageStartIndex);
+
       return (
         <FocusZone
           direction={ FocusZoneDirection.vertical }
@@ -105,13 +104,25 @@ export default class Table extends React.Component<ITable, ITable> {
                 </tbody>
               </table>
               <div className={Table.tablePagerWrapperClasses}>
-                <a href="#" onClick={this.prevPage} className={Table.tablePagerClasses}>
-                  <i className="ms-Icon ms-Icon--triangleLeft" aria-action="Previous page of results"></i>
-                </a>
+              {(() => {
+                if (this.hasPrevPage) {
+                  return (
+                    <a href="#" onClick={this.prevPage} className={Table.tablePagerClasses}>
+                      <i className="ms-Icon ms-Icon--triangleLeft" aria-action="Previous page of results"></i>
+                    </a>
+                  );
+                }
+              })()}
                 <span>{Math.round(this.state.pageStartIndex / this.state.pageSize) + 1} of {this.pageCount}</span>
-                <a href="#" onClick={this.nextPage} className={Table.tablePagerClasses}>
-                  <i className="ms-Icon ms-Icon--triangleRight" aria-action="Next page of results"></i>
-                </a>
+              {(() => {
+                if (this.hasNextPage) {
+                  return (
+                    <a href="#" onClick={this.nextPage} className={Table.tablePagerClasses}>
+                      <i className="ms-Icon ms-Icon--triangleRight" aria-action="Next page of results"></i>
+                    </a>
+                  );
+                }
+              })()}
                 <div>About {this.props.rows.length} results</div>
               </div>
             </div>
@@ -119,28 +130,21 @@ export default class Table extends React.Component<ITable, ITable> {
       );
   }
 
-  private nextPage (): void {
-    const newPageStartIndex: number = this.state.pageStartIndex + this.state.pageSize;
-    if (newPageStartIndex > this.maxPageStartIndex) {
-      // already on the last page
-    }
-    else {
-      this.state.pageStartIndex = newPageStartIndex;
+  private nextPage(): void {
+    if (this.hasNextPage) {
+      this.state.pageStartIndex = this.state.pageStartIndex + this.state.pageSize;
       this.setState(this.state);
     }
   }
 
-  private prevPage (): void {
-    let newPageStartIndex: number = this.state.pageStartIndex - this.state.pageSize;
-    if (newPageStartIndex < this.minPageStartIndex) {
-      // Ensure on the first page
-      newPageStartIndex = this.minPageStartIndex;
+  private prevPage(): void {
+    if (this.hasPrevPage) {
+      this.state.pageStartIndex = this.state.pageStartIndex - this.state.pageSize;
+      this.setState(this.state);
     }
-    this.state.pageStartIndex = newPageStartIndex;
-    this.setState(this.state);
   }
 
-  private sortOnColumn (columnIndex: number): void {
+  private sortOnColumn(columnIndex: number): void {
       if (columnIndex >= 0 && columnIndex < this.columnCount) {
 
         // if the column is already sorted, sort in opposite direction, else sort in constant direction
@@ -155,7 +159,7 @@ export default class Table extends React.Component<ITable, ITable> {
       }
   }
 
-  private sortOnColumnInternal (data: ITable): void {
+  private sortOnColumnInternal(data: ITable): void {
     if (data.currentSort >= 0 && data.currentSort < this.columnCount) {
       data.rows.sort((rowA, rowB) => {
         const cmpr: number = this.compareTableRow(data.currentSort, rowA, rowB);
@@ -164,7 +168,7 @@ export default class Table extends React.Component<ITable, ITable> {
     }
   }
 
-  private compareTableRow (columnIndex: number, rowA: ITableRow, rowB: ITableRow): number {
+  private compareTableRow(columnIndex: number, rowA: ITableRow, rowB: ITableRow): number {
     const cellA: ITableCell<any> = rowA.cells[columnIndex];
     const cellB: ITableCell<any> = rowB.cells[columnIndex];
     const cellDataA: any = cellA.sortableData;
@@ -200,53 +204,5 @@ export default class Table extends React.Component<ITable, ITable> {
       }
     }
     return compareValue;
-  }
-}
-
-class TableCellHeader extends React.Component<ITableCellHeader, {}> {
-  protected static tableCellHeaderSortClasses: string = css(styles.msTableHeaderCell, "ms-Link");
-
-  public render(): JSX.Element {
-    return (
-      <td className={TableCell.tableCellClasses} onClick={this.props.onClick}>
-        <a className={TableCellHeader.tableCellHeaderSortClasses} href="#">
-          {this.props.displayData}
-          {(() => {
-            if (this.props.isSorted) {
-              if (!this.props.sortDirDesc) {
-                return <i className="ms-Icon ms-Icon--chevronThinUp"></i>;
-              }
-              else if (this.props.sortDirDesc) {
-                return <i className="ms-Icon ms-Icon--chevronThinDown"></i>;
-              }
-            }
-          })()}
-        </a>
-      </td>
-    );
-  }
-}
-
-class TableCell extends React.Component<ITableCell<any>, {}> {
-  public static tableCellClasses: string = css(styles.msTableCellNoWrap, styles.autoCursor, "ms-Table-cell");
-  protected static tableCellHyperlinkClasses: string = css("ms-Link");
-
-  public render(): JSX.Element {
-    if (this.props.href) {
-      return (
-        <td className={TableCell.tableCellClasses}>
-          <a className={TableCell.tableCellHyperlinkClasses} href={this.props.href} target="_blank">
-            {this.props.displayData}
-          </a>
-        </td>
-      );
-    }
-    else {
-      return (
-        <td className={TableCell.tableCellClasses}>
-          {this.props.displayData}
-        </td>
-      );
-    }
   }
 }

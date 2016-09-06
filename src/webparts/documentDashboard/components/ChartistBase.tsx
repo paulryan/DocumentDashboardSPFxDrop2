@@ -27,11 +27,9 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
   ];
 
   public render(): JSX.Element {
-
+      const chartContainerClasses: string = `${styles.ctSeries} ct-chart ct-perfect-fourth`;
       return (
-        <div className={styles.ctSeries}>
-        <div className="ct-chart ct-perfect-fourth"></div>
-        </div>
+        <div className={chartContainerClasses}></div>
       );
       // ct-golden-section
       // ct-perfect-fourth
