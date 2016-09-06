@@ -9,6 +9,18 @@
 
 //@import "~office-ui-fabric/dist/sass/Fabric.Components";
 
+.ctSeries {
+  text {
+      fill: #333 !important;
+      color: #333 !important;
+      font-size: 0.85rem;
+      text-shadow:
+      -1px -1px 0 rgba(255,255,255, 0.1),
+      1px -1px 0 rgba(255,255,255, 0.1),
+      -1px 1px 0 rgba(255,255,255, 0.1),
+      1px 1px 0 rgba(255,255,255, 0.1),
+  }
+}
 
 .msTableCellNoWrap {
     white-space: nowrap;
@@ -24,8 +36,18 @@
   text-align: center;
 }
 
+.msTablePager {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
 .msTablePager:visited {
   color: inherit !important;
+}
+
+.msTablePager:hover {
+  color: #0078d7;
 }
 
 .msTableHeaderCell:visited {

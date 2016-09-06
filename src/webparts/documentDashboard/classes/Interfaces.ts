@@ -3,6 +3,8 @@ import {
 } from "@microsoft/sp-client-preview";
 
 import {
+  ChartAxis,
+  ChartAxisOrder,
   ControlMode,
   DisplayType,
   Mode,
@@ -32,11 +34,15 @@ export interface IDocumentDashboardProps {
   mode: Mode;
   displayType: DisplayType;
   limitPieChartSegments: number;
-  limitBarChartBars: number;
+  limitXAxisPlots: number;
   tableColumnsShowSharedWith: boolean;
   tableColumnsShowCrawledTime: boolean;
   tableColumnsShowSiteTitle: boolean;
   tableColumnsShowCreatedByModifiedBy: boolean;
+
+  chartAxis: ChartAxis;
+  tablePageSize: number;
+  chartAxisOrder: ChartAxisOrder;
 }
 
 export interface IDocumentDashboardState {
@@ -46,9 +52,6 @@ export interface IDocumentDashboardState {
 
   scope: SPScope;
   mode: Mode;
-  displayType: DisplayType;
-  // limitPieChartSegments: number;
-  // limitBarChartBars: number;
 }
 
 export interface ISecurableObject {
@@ -89,11 +92,14 @@ export interface IDocumentDashboardWebPartProps {
   crawlTimeManagedPropertyName: string;
   limitRowsFetched: number;
   limitPieChartSegments: number;
-  limitBarChartBars: number;
+  limitXAxisPlots: number;
   tableColumnsShowSharedWith: boolean;
   tableColumnsShowCrawledTime: boolean;
   tableColumnsShowSiteTitle: boolean;
   tableColumnsShowCreatedByModifiedBy: boolean;
+  chartAxis: ChartAxis;
+  tablePageSize: number;
+  chartAxisOrder: ChartAxisOrder;
 }
 
 export interface ISearchResponse {
@@ -115,6 +121,7 @@ export interface IChart {
   items: IChartItem[];
   columnIndexToGroupUpon: number;
   maxGroups: number;
+  chartAxisOrder: ChartAxisOrder;
 }
 
 export interface IChartItem {

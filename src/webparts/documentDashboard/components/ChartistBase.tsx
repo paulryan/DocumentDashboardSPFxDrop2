@@ -6,6 +6,12 @@ import {
   IChartItem
 } from "../classes/Interfaces";
 
+import {
+  ChartAxisOrder
+} from "../classes/Enums";
+
+import styles from "../DocumentDashboard.module.scss";
+
 export abstract class ChartistBase extends React.Component<IChart, IChart> {
 
   protected responsiveOptions: Chartist.IResponsiveOptionTuple<Chartist.IPieChartOptions>[] = [
@@ -22,7 +28,9 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
 
   public render(): JSX.Element {
       return (
+        <div className={styles.ctSeries}>
         <div id="chartist" className="ct-chart ct-perfect-fourth"></div>
+        </div>
       );
       // ct-golden-section
       // ct-perfect-fourth
@@ -35,7 +43,7 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
 
   public abstract renderChart(): void;
 
-  protected getChartistData(maxGroups: number): Chartist.IChartistData {
+  protected getChartistData(): Chartist.IChartistData {
     // Create a object of chart items
     const chartItemDatas: IChartItem[] = [];
     const chartItemsDict: any = {};
@@ -53,9 +61,14 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
 
     // Find the top (maxGroups - 1). Then add all other groups together as an 'other' group
     let finalDataToChart: IChartItem[] = null;
-    if (maxGroups < chartItemDatas.length) {
-      chartItemDatas.sort((a, b) => b.weight - a.weight);
-      const sliceIndex: number = maxGroups > 2 ? maxGroups - 1 : 1;
+    if (this.props.maxGroups < chartItemDatas.length) {
+      if (this.props.chartAxisOrder === ChartAxisOrder.PrioritiseSmallestGroups) {
+        chartItemDatas.sort((a, b) => a.weight - b.weight);
+      }
+      else {
+        chartItemDatas.sort((a, b) => b.weight - a.weight);
+      }
+      const sliceIndex: number = this.props.maxGroups > 2 ? this.props.maxGroups - 1 : 1;
       const firstGroups: IChartItem[] = chartItemDatas.slice(0, sliceIndex);
       const otherGroup: IChartItem = chartItemDatas.slice(sliceIndex).reduce((p, c) => { p.weight += c.weight; return p; });
       otherGroup.label = "Other";

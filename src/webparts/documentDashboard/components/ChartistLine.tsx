@@ -9,38 +9,19 @@ import {
 export default class ChartistLine extends ChartistBase {
 
   public renderChart(): void {
-
-    const data: Chartist.IChartistData = this.getChartistData(this.props.maxGroups);
-
-    // Add data points for every day between earliest and laters item
-    // const newLabels: string[] = [];
-    // const newSeries: number[] = [];
-
-    // const firstDay: Date = new Date(data.series[0] as number);
-    // const finalDay: Date = new Date(data.series[data.series.length - 1] as number);
-
-    // for (let day = firstDay; day <= finalDay; day.setDate(day.getDate() + 1)) {
-
-    // }
-
-    // data.labels = (data.labels as string[]).map(l => parseInt(l));
-
-    // const lowLabel: number = data.labels[0] as number;
-    // const highLabal: number = data.labels[data.labels.length - 1] as number;
-    // const labelDelta: number = (highLabal - lowLabel); // * 0.1;
+    const maxLabelLength: number = 20;
+    const data: Chartist.IChartistData = this.getChartistData();
 
     const options: Chartist.ILineChartOptions = {
-      // axisX: {
-      //   type: Chartist.AutoScaleAxis,
-      //   labelOffset: {
-      //       x: 20,
-      //       y: 0
-      //     }
-      // },
       axisY: {
-        type: Chartist.FixedScaleAxis,
         low: 0,
-        onlyInteger: true
+        onlyInteger: true,
+        labelInterpolationFnc: (label: string, index: number): string => {
+          if (label && label.length > maxLabelLength) {
+            label = label.substr(0, maxLabelLength) + "...";
+          }
+          return label;
+        }
       },
       chartPadding: {
         top: 30,

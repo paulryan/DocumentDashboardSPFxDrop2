@@ -58,9 +58,11 @@ export default class ContentFetcher implements ISecurableObjectStore {
     const extSharedFql: string = "ViewableByExternalUsers:1";
     const anonSharedFql: string = "ViewableByAnonymousUsers:1";
 
+    let graphFql: string = "";
     let modeFql: string = "";
     if (self.props.mode === Mode.AllDocuments) {
-      modeFql = `${documentsFql}`;
+      //modeFql = `${documentsFql}`;
+      modeFql = "*";
     }
     else if (self.props.mode === Mode.MyDocuments) {
       modeFql = `${myFql} ${documentsFql}`;
@@ -86,6 +88,10 @@ export default class ContentFetcher implements ISecurableObjectStore {
       const now: Date = new Date();
       const earlier: Date = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
       modeFql = `${documentsFql} Write<${GetDateFqlString(earlier)}`;
+    }
+    else if (self.props.mode === Mode.Delve) {
+      modeFql = `${documentsFql}`;
+      graphFql = "properties='GraphQuery:ACTOR(ME)'";
     }
     else {
       self.log.logError("Unsupported mode: " + self.props.mode);
@@ -116,8 +122,12 @@ export default class ContentFetcher implements ISecurableObjectStore {
 
     const queryText: string = "querytext='" + modeFql + scopeFql + "'";
     const selectProps: string = "selectproperties='" + selectPropsArray.join(",") + "'";
-    const finalUri: string = baseUri + "?" + queryText + "&" + selectProps;
+    let finalUri: string = baseUri + "?" + queryText + "&" + selectProps;
+    if (graphFql) {
+      finalUri += "&" + graphFql;
+    }
 
+    // TODO: support parallel requests
     const prom: Promise<IGetContentFuncResponse> = new Promise<IGetContentFuncResponse>((resolve: any, reject: any) => {
       self.queryForAllItems(finalUri, 0, rowLimit, null, resolve, reject);
     });
@@ -173,8 +183,7 @@ export default class ContentFetcher implements ISecurableObjectStore {
             let getAnotherPage: boolean = false;
             if (!currentResponse.isError && response.results.length < this.props.limitRowsFetched) {
               // Get the next page if results === rowlimit
-              const rowCount: number = r.PrimaryQueryResult.RelevantResults.RowCount;
-              if (rowCount === rowlimit && startIndex + rowCount < r.PrimaryQueryResult.RelevantResults.TotalRows) {
+              if (searchResponse.rowCount === rowlimit && startIndex + rowlimit < searchResponse.totalRows) {
                 getAnotherPage = true;
               }
             }

@@ -7,6 +7,7 @@ import {
   IPropertyPaneSettings,
   IWebPartContext,
   PropertyPaneCheckbox,
+  PropertyPaneChoiceGroup,
   PropertyPaneDropdown,
   PropertyPaneLabel,
   PropertyPaneLink,
@@ -21,7 +22,11 @@ import * as ReactDom from "react-dom";
 import DocumentDashboard from "./components/DocumentDashboard";
 
 import {
+  ChartAxis,
+  ChartAxisOrder,
   DisplayType,
+  GetDisplayTermForEnumChartAxis,
+  GetDisplayTermForEnumChartAxisOrder,
   GetDisplayTermForEnumDisplayType,
   GetDisplayTermForEnumMode,
   GetDisplayTermForEnumSPScope,
@@ -78,12 +83,15 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
       mode: this.properties.mode,
       scope: this.properties.scope,
       displayType: this.properties.displayType,
-      limitBarChartBars: this.properties.limitBarChartBars,
+      limitXAxisPlots: this.properties.limitXAxisPlots,
       limitPieChartSegments: this.properties.limitPieChartSegments,
       tableColumnsShowSharedWith: this.properties.tableColumnsShowSharedWith,
       tableColumnsShowCrawledTime: this.properties.tableColumnsShowCrawledTime,
       tableColumnsShowSiteTitle: this.properties.tableColumnsShowSiteTitle,
-      tableColumnsShowCreatedByModifiedBy: this.properties.tableColumnsShowCreatedByModifiedBy
+      tableColumnsShowCreatedByModifiedBy: this.properties.tableColumnsShowCreatedByModifiedBy,
+      chartAxis: this.properties.chartAxis,
+      tablePageSize: this.properties.tablePageSize,
+      chartAxisOrder: this.properties.chartAxisOrder
     });
 
     // Build the control!
@@ -92,17 +100,18 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
 
   protected get propertyPaneSettings(): IPropertyPaneSettings {
     return {
+
       pages: [
         {
           header: {
-            description: "Standard settings"
+            description: "Settings on this page determine which content you will see"
           },
-          displayGroupsAsAccordion: true,
+          displayGroupsAsAccordion: false,
           groups: [
             {
-              groupName: "Content",
+              groupName: "What should we look for?",
               groupFields: [
-                PropertyPaneDropdown("mode", {
+                PropertyPaneChoiceGroup("mode", {
                   label: "What type content do you want to see?",
                   options: [
                     { key: Mode.AllDocuments, text: GetDisplayTermForEnumMode(Mode.AllDocuments) },
@@ -112,7 +121,8 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
                     { key: Mode.AllAnonSharedDocuments, text: GetDisplayTermForEnumMode(Mode.AllAnonSharedDocuments) },
                     { key: Mode.MyAnonSharedDocuments, text: GetDisplayTermForEnumMode(Mode.MyAnonSharedDocuments) },
                     { key: Mode.RecentlyModifiedDocuments, text: GetDisplayTermForEnumMode(Mode.RecentlyModifiedDocuments) },
-                    { key: Mode.InactiveDocuments, text: GetDisplayTermForEnumMode(Mode.InactiveDocuments) }
+                    { key: Mode.InactiveDocuments, text: GetDisplayTermForEnumMode(Mode.InactiveDocuments) },
+                    { key: Mode.Delve, text: GetDisplayTermForEnumMode(Mode.Delve) }
                   ]
                 }),
                 PropertyPaneDropdown("scope", {
@@ -122,44 +132,20 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
                     { key: SPScope.SiteCollection, text: GetDisplayTermForEnumSPScope(SPScope.SiteCollection) },
                     { key: SPScope.Site, text: GetDisplayTermForEnumSPScope(SPScope.Site) }
                   ]
-                }),
-                PropertyPaneDropdown("displayType", {
-                  label: "How do you want the results rendered?",
-                  options: [
-                    { key: DisplayType.Table, text: GetDisplayTermForEnumDisplayType(DisplayType.Table) },
-                    { key: DisplayType.BySite, text: GetDisplayTermForEnumDisplayType(DisplayType.BySite) },
-                    { key: DisplayType.ByUser, text: GetDisplayTermForEnumDisplayType(DisplayType.ByUser) },
-                    { key: DisplayType.OverTime, text: GetDisplayTermForEnumDisplayType(DisplayType.OverTime) }
-                  ]
                 })
               ]
             },
             {
-            groupName: "Table columns",
-              groupFields: [
-                PropertyPaneCheckbox("tableColumnsShowSharedWith", {
-                  //label: "Display 'Shared with' and 'Shared by' columns?"
-                  text: "Display 'Shared with' and 'Shared by' columns?"
-                }),
-                PropertyPaneCheckbox("tableColumnsShowCrawledTime", {
-                  //label: "Display 'Last crawled' column?"
-                  text: "Display 'Last crawled' column?"
-                }),
-                PropertyPaneCheckbox("tableColumnsShowSiteTitle", {
-                  //label: "Display 'Site title' column?"
-                  text: "Display 'Site title' column?"
-                }),
-                PropertyPaneCheckbox("tableColumnsShowCreatedByModifiedBy", {
-                  //label: "Display 'Modified by' and 'Created by' columns?"
-                  text: "Display 'Modified by' and 'Created by' columns?"
-                })
-              ]
-            },
-            {
-            groupName: "Misc.",
+              groupName: "How should we handle empty or large data sets?",
               groupFields: [
                 PropertyPaneTextField("noResultsString", {
                   label: "What message should we display when there are no results?"
+                }),
+                PropertyPaneSlider("limitRowsFetched", {
+                  label: "What is the maximum number of items that we should fetch?",
+                  min: 500,
+                  max: 50000,
+                  step: 500
                 })
               ]
             }
@@ -167,33 +153,91 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
         },
         {
           header: {
-            description: "Advanced settings"
+            description: "Settings on this page determine how content is displayed"
           },
           displayGroupsAsAccordion: true,
           groups: [
             {
-            groupName: "Limits",
+              groupName: "How do you want content to be displayed?",
               groupFields: [
-                PropertyPaneSlider("limitRowsFetched", {
-                  label: "What is the maximum number of items that should be fetched?",
-                  min: 500,
-                  max: 50000,
-                  step: 500
+                PropertyPaneDropdown("displayType", {
+                  label: "Which visual model should we use?",
+                  options: [
+                    { key: DisplayType.Table, text: GetDisplayTermForEnumDisplayType(DisplayType.Table) },
+                    { key: DisplayType.PieChart, text: GetDisplayTermForEnumDisplayType(DisplayType.PieChart) },
+                    { key: DisplayType.BarChart, text: GetDisplayTermForEnumDisplayType(DisplayType.BarChart) },
+                    { key: DisplayType.LineChart, text: GetDisplayTermForEnumDisplayType(DisplayType.LineChart) }
+                  ]
                 }),
-                PropertyPaneSlider("limitPieChartSegments", {
-                  label: "What is the maximum number of segments to display on a pie graph?",
-                  min: 2,
-                  max: 50
-                }),
-                PropertyPaneSlider("limitBarChartBars", {
-                  label: "What is the maximum number of bars to display on a bar graph?",
-                  min: 2,
-                  max: 50
+                PropertyPaneDropdown("chartAxis", {
+                  label: "For charts only, on which property should we group results?",
+                  options: [
+                    { key: ChartAxis.Site, text: GetDisplayTermForEnumChartAxis(ChartAxis.Site) },
+                    { key: ChartAxis.User, text: GetDisplayTermForEnumChartAxis(ChartAxis.User) },
+                    { key: ChartAxis.Time, text: GetDisplayTermForEnumChartAxis(ChartAxis.Time) }
+                  ]
                 })
               ]
             },
             {
-            groupName: "Search schema",
+              groupName: "How do you want a table to look?",
+              groupFields: [
+                PropertyPaneCheckbox("tableColumnsShowSharedWith", {
+                  text: "Should we display 'Shared with' and 'Shared by' columns?"
+                }),
+                PropertyPaneCheckbox("tableColumnsShowCrawledTime", {
+                  text: "Should we display 'Last crawled' column?"
+                }),
+                PropertyPaneCheckbox("tableColumnsShowSiteTitle", {
+                  text: "Should we display 'Site title' column?"
+                }),
+                PropertyPaneCheckbox("tableColumnsShowCreatedByModifiedBy", {
+                  text: "Should we display 'Modified by' and 'Created by' columns?"
+                }),
+                PropertyPaneDropdown("tablePageSize", {
+                  label: "How large should a page be?",
+                  options: [
+                    { key: 5, text: "5" },
+                    { key: 10, text: "10" },
+                    { key: 20, text: "20" },
+                    { key: 50, text: "50" },
+                    { key: 100, text: "100" }
+                  ]
+                })
+              ]
+            },
+            {
+              groupName: "How do you want charts to look?",
+              groupFields: [
+                PropertyPaneSlider("limitPieChartSegments", {
+                  label: "What is the maximum number of segments that should be displayed on a pie chart?",
+                  min: 2,
+                  max: 50
+                }),
+                PropertyPaneSlider("limitXAxisPlots", {
+                  label: "What is the maximum number of x-axis plots that should be displayed on a chart?",
+                  min: 2,
+                  max: 50
+                }),
+                PropertyPaneDropdown("chartAxisOrder", {
+                  label: "When we can't show everything should we prioritise the largest groups or the smallest groups?",
+                  options: [
+                    { key: ChartAxisOrder.PrioritiseLargestGroups, text: GetDisplayTermForEnumChartAxisOrder(ChartAxisOrder.PrioritiseLargestGroups) },
+                    { key: ChartAxisOrder.PrioritiseSmallestGroups, text: GetDisplayTermForEnumChartAxisOrder(ChartAxisOrder.PrioritiseSmallestGroups) }
+                  ]
+                })
+              ]
+            }
+          ]
+        },
+        {
+          header: {
+            description: "Settings on this page are for advanced users only"
+          },
+          displayGroupsAsAccordion: false,
+          groups: [
+            {
+              groupName: "Search schema configuration",
               groupFields: [
                 PropertyPaneTextField("sharedWithManagedPropertyName", {
                   label: "What is the name of the queryable Managed Property containing shared with details?",

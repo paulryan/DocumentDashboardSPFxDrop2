@@ -9,12 +9,18 @@ import {
 export default class ChartistBar extends ChartistBase {
 
   public renderChart(): void {
-
-    const data: Chartist.IChartistData = this.getChartistData(this.props.maxGroups);
+    const maxLabelLength: number = 20;
+    const data: Chartist.IChartistData = this.getChartistData();
 
     const options: Chartist.IBarChartOptions = {
       axisY: {
-        onlyInteger: true
+        onlyInteger: true,
+        labelInterpolationFnc: (label: string, index: number): string => {
+          if (label && label.length > maxLabelLength) {
+            label = label.substr(0, maxLabelLength) + "...";
+          }
+          return label;
+        }
       },
       chartPadding: {
         top: 30,

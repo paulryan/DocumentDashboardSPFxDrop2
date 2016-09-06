@@ -6,26 +6,34 @@
   "version": "0.0.1",
   "manifestVersion": 2,
 
-  "preconfiguredEntries": [{
-    "groupId": "de839066-3bbd-4531-96a1-ab6906e436ab",
-    "group": { "default": "Reporting" },
-    "title": { "default": "Document Dashboard" },
-    "description": { "default": "Quick document analytics" },
-    "officeFabricIconFontName": "Page",
-    "properties": {
-      "scope": 1,
-      "mode": 1,
-      "displayType": 1,
-      "noResultsString": "No content was found",
-      "sharedWithManagedPropertyName": "SharedWithDetailsQueryable",
-      "crawlTimeManagedPropertyName": "CrawlTime",
-      "limitRowsFetched": "5000",
-      "limitPieChartSegments": "10",
-      "limitBarChartBars": "10",
-      "tableColumnsShowSharedWith": false,
-      "tableColumnsShowCrawledTime": true,
-      "tableColumnsShowSiteTitle": false,
-      "tableColumnsShowCreatedByModifiedBy": true
+  "preconfiguredEntries": [
+    {
+      "groupId": "de839066-3bbd-4531-96a1-ab6906e436ab",
+      "group": { "default": "Reporting" },
+      "title": { "default": "Externally Shared By Site" },
+      "description": { "default": "Which sites have the most extenally shared content?" },
+      "officeFabricIconFontName": "Group",
+      "properties": {
+
+        "scope": 1,
+        "mode": 3,
+        "noResultsString": "No content was found",
+        "limitRowsFetched": 5000,
+
+        "displayType": 2,
+        "chartAxis": 1,
+        "tableColumnsShowSharedWith": true,
+        "tableColumnsShowCrawledTime": true,
+        "tableColumnsShowSiteTitle": true,
+        "tableColumnsShowCreatedByModifiedBy": true,
+        "tablePageSize": 10,
+        "limitPieChartSegments": 10,
+        "limitXAxisPlots": 10,
+        "chartAxisOrder": 1,
+
+        "sharedWithManagedPropertyName": "SharedWithDetailsQueryable",
+        "crawlTimeManagedPropertyName": "CrawlTime"
+      }
     }
-  }]
+  ]
 }

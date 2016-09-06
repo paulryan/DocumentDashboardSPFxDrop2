@@ -38,6 +38,9 @@ export function GetDisplayTermForEnumMode(mode: Mode): string {
   else if (mode === Mode.InactiveDocuments) {
     displayName = "Inactive documents (>6 months)";
   }
+  else if (mode === Mode.Delve) {
+    displayName = "Delve documents";
+  }
   return displayName;
 }
 
@@ -46,14 +49,39 @@ export function GetDisplayTermForEnumDisplayType(displayType: DisplayType): stri
   if (displayType === DisplayType.Table) {
     displayName = "As a table";
   }
-  else if (displayType === DisplayType.BySite) {
-    displayName = "As a chart, by site";
+  else if (displayType === DisplayType.PieChart) {
+    displayName = "As a pie chart";
   }
-  else if (displayType === DisplayType.ByUser) {
-    displayName = "As a chart, by user";
+  else if (displayType === DisplayType.BarChart) {
+    displayName = "As a bar chart";
   }
-  else if (displayType === DisplayType.OverTime) {
-    displayName = "As a chart, by last modified";
+  else if (displayType === DisplayType.LineChart) {
+    displayName = "As a line chart";
+  }
+  return displayName;
+}
+
+export function GetDisplayTermForEnumChartAxis(chartAxis: ChartAxis): string {
+  let displayName: string = "Unsupported chart axis";
+  if (chartAxis === ChartAxis.Site) {
+    displayName = "Site";
+  }
+  else if (chartAxis === ChartAxis.User) {
+    displayName = "User";
+  }
+  else if (chartAxis === ChartAxis.Time) {
+    displayName = "Last modified";
+  }
+  return displayName;
+}
+
+export function GetDisplayTermForEnumChartAxisOrder(chartAxisOrder: ChartAxisOrder): string {
+  let displayName: string = "Unsupported chart axis";
+  if (chartAxisOrder === ChartAxisOrder.PrioritiseLargestGroups) {
+    displayName = "Largest groups";
+  }
+  else if (chartAxisOrder === ChartAxisOrder.PrioritiseSmallestGroups) {
+    displayName = "Smallest groups";
   }
   return displayName;
 }
@@ -72,14 +100,26 @@ export enum Mode {
   AllAnonSharedDocuments = 5,
   MyAnonSharedDocuments = 6,
   RecentlyModifiedDocuments = 7,
-  InactiveDocuments = 8
+  InactiveDocuments = 8,
+  Delve = 9
 }
 
 export enum DisplayType {
   Table = 1,
-  BySite = 2,
-  ByUser = 3,
-  OverTime = 4
+  PieChart = 2,
+  BarChart = 3,
+  LineChart = 4
+}
+
+export enum ChartAxis {
+  Site = 1,
+  User = 2,
+  Time = 3
+}
+
+export enum ChartAxisOrder {
+  PrioritiseLargestGroups = 1,
+  PrioritiseSmallestGroups = 2
 }
 
 export enum SecurableObjectType {

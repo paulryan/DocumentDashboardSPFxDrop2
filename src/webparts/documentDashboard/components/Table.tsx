@@ -21,7 +21,7 @@ export default class Table extends React.Component<ITable, ITable> {
   private static tableBodyClasses: string = css("ms-bgColor-white");
   private static tableRowClasses: string = css("ms-Table-row");
   private static tablePagerWrapperClasses: string = css(styles.msTablePagerWrapper);
-  private static tablePagerClasses: string = css(styles.msTablePager, "ms-font-xl");
+  private static tablePagerClasses: string = css(styles.msTablePager, "ms-font-l");
 
   private maxPageStartIndex: number = 0;
   private minPageStartIndex: number = 0;
@@ -38,7 +38,7 @@ export default class Table extends React.Component<ITable, ITable> {
   public componentWillMount(): void {
     // Calcuate constants
     const rowCount: number = this.props.rows.length;
-    this.maxPageStartIndex = rowCount - 1; //rowCount - this.props.pageSize;
+    this.maxPageStartIndex = rowCount - 1; // rowCount - this.props.pageSize;
     if (this.maxPageStartIndex < this.minPageStartIndex) {
       this.maxPageStartIndex = this.minPageStartIndex;
     }
@@ -112,6 +112,7 @@ export default class Table extends React.Component<ITable, ITable> {
                 <a href="#" onClick={this.nextPage} className={Table.tablePagerClasses}>
                   <i className="ms-Icon ms-Icon--triangleRight" aria-action="Next page of results"></i>
                 </a>
+                <div>About {this.props.rows.length} results</div>
               </div>
             </div>
         </FocusZone>
@@ -210,8 +211,6 @@ class TableCellHeader extends React.Component<ITableCellHeader, {}> {
       <td className={TableCell.tableCellClasses} onClick={this.props.onClick}>
         <a className={TableCellHeader.tableCellHeaderSortClasses} href="#">
           {this.props.displayData}
-        </a>
-        <span className={styles.floatRight}>
           {(() => {
             if (this.props.isSorted) {
               if (!this.props.sortDirDesc) {
@@ -222,7 +221,7 @@ class TableCellHeader extends React.Component<ITableCellHeader, {}> {
               }
             }
           })()}
-        </span>
+        </a>
       </td>
     );
   }

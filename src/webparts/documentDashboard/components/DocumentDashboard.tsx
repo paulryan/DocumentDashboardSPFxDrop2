@@ -1,8 +1,10 @@
 import * as React from "react";
 
 import {
+  ChartAxis,
   ControlMode,
   DisplayType,
+  GetDisplayTermForEnumChartAxis,
   GetDisplayTermForEnumDisplayType,
   GetDisplayTermForEnumMode,
   GetDisplayTermForEnumSPScope
@@ -29,11 +31,11 @@ import {
 } from "../classes/Logger";
 
 import ChartistBar from "./ChartistBar";
-// import ChartistLine from "./ChartistLine";
+import ChartistLine from "./ChartistLine";
 import ChartistPie from "./ChartistPie";
 import Table from "./Table";
 
-import importableModuleLoader from '@microsoft/sp-module-loader';
+import importableModuleLoader from "@microsoft/sp-module-loader";
 
 interface ITableProps {
   items: ISecurableObject[];
@@ -60,8 +62,8 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
     super();
     this.log = new Logger("DocumentDashboard");
 
-    importableModuleLoader.loadCss("https://appsforoffice.microsoft.com/fabric/2.2.0/fabric.components.min.css");
-    importableModuleLoader.loadCss('//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css');
+    importableModuleLoader.loadCss("https://appsforoffice.microsoft.com/fabric/2.6.1/fabric.components.min.css");
+    importableModuleLoader.loadCss("//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css");
   }
 
   public componentWillMount(): void {
@@ -81,11 +83,10 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
 
   public shouldComponentUpdate(nextProps: IDocumentDashboardProps, nextState: IDocumentDashboardState): boolean {
     this.log.logInfo("shouldComponentUpdate");
-    return !this.state
-      || this.state.controlMode !== nextState.controlMode
-      || this.state.mode !== nextState.mode
-      || this.state.scope !== nextState.scope
-      || this.state.displayType !== nextState.displayType;
+    return !this.state || this.state.controlMode !== nextState.controlMode;
+      // || this.state.mode !== nextState.mode
+      // || this.state.scope !== nextState.scope
+      // || this.state.displayType !== nextState.displayType;
   }
 
   public componentDidUpdate(): void {
@@ -100,10 +101,15 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
         <div className="ms-font-xxl">Document Dashboard</div>
         <div className="ms-font-l">
         {
-          GetDisplayTermForEnumMode(this.state.mode) + " "
-          + GetDisplayTermForEnumSPScope(this.state.scope).toLowerCase() + " "
-          + GetDisplayTermForEnumDisplayType(this.state.displayType).toLowerCase()
+          GetDisplayTermForEnumMode(this.props.mode) + " "
+          + GetDisplayTermForEnumSPScope(this.props.scope).toLowerCase() + " "
+          + GetDisplayTermForEnumDisplayType(this.props.displayType).toLowerCase()
         }
+        {(() => {
+          if (this.props.displayType !== DisplayType.Table) {
+            return ` (by ${GetDisplayTermForEnumChartAxis(this.props.chartAxis).toLowerCase()})`;
+          }
+        })()}
         </div>
       </div>
     );
@@ -126,26 +132,32 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
     }
     else if (this.state && this.state.controlMode === ControlMode.Content) {
       this.log.logInfo("render (Content)");
-      if (this.state.displayType === DisplayType.Table) {
+      if (this.props.displayType === DisplayType.Table) {
         const params: ITable = this.getStateAsITable();
         component = (
           <Table {...params} />
         );
       }
-      else if (this.state.displayType === DisplayType.BySite || this.state.displayType === DisplayType.ByUser) {
-        const params: IChart = this.getStateAsIChart(this.state.displayType, this.props.limitPieChartSegments);
+      else if (this.props.displayType === DisplayType.PieChart) {
+        const params: IChart = this.getStateAsIChart(this.props.chartAxis, this.props.limitPieChartSegments);
         component = (
           <ChartistPie {...params} />
         );
       }
-      else if (this.state.displayType === DisplayType.OverTime) {
-        const params: IChart = this.getStateAsIChart(this.state.displayType, this.props.limitBarChartBars);
+      else if (this.props.displayType === DisplayType.BarChart) {
+        const params: IChart = this.getStateAsIChart(this.props.chartAxis, this.props.limitXAxisPlots);
         component = (
           <ChartistBar {...params} />
         );
       }
+      else if (this.props.displayType === DisplayType.LineChart) {
+        const params: IChart = this.getStateAsIChart(this.props.chartAxis, this.props.limitXAxisPlots);
+        component = (
+          <ChartistLine {...params} />
+        );
+      }
       else {
-        this.log.logError("Unsupported display type: " + this.state.displayType);
+        this.log.logError("Unsupported display type: " + this.props.displayType);
         component = (
           <div className="ms-font-l">Error: Unsupported display type</div>
         );
@@ -219,17 +231,14 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
       controlMode: controlMode,
       message: message,
       mode: this.props.mode,
-      scope: this.props.scope,
-      displayType: this.props.displayType
-      // limitPieChartSegments: this.props.limitPieChartSegments,
-      // limitBarChartBars: this.props.limitBarChartBars
+      scope: this.props.scope
     });
   }
 
-  private getStateAsIChart(displayType: DisplayType, maxGroups: number): IChart {
+  private getStateAsIChart(chartAxis: ChartAxis, maxGroups: number): IChart {
     const dataPoints: IChartItem[] = [];
     this.state.results.forEach((securableObj) => {
-      if (displayType === DisplayType.ByUser) {
+      if (chartAxis === ChartAxis.User) {
         // Get all users associated with item.
         // Only count each user once per item.
         let users: IChartItem[] = [];
@@ -271,14 +280,17 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
         // Add to data points array
         dataPoints.push(...users);
       }
-      else if (displayType === DisplayType.BySite) {
+      else if (chartAxis === ChartAxis.Site) {
         dataPoints.push({
           label: securableObj.siteTitle.displayValue,
           data: securableObj.siteID.data,
           weight: 1
         });
       }
-      else if (displayType === DisplayType.OverTime) {
+      else if (chartAxis === ChartAxis.Time) {
+
+        // TODO: Add items with weight 0 for every missing day?
+
         if (securableObj.lastModifiedTime.data) {
           const d: Date = securableObj.lastModifiedTime.data;
           const roundedDate: Date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -291,11 +303,10 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
       }
     });
 
-    // TODO: Add items with weight 0 for every missing day?
-
     return {
       items: dataPoints,
       maxGroups: maxGroups,
+      chartAxisOrder: this.props.chartAxisOrder,
       columnIndexToGroupUpon: 0 // As there is only a single column in the data we return
     };
   }
@@ -358,7 +369,7 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
       rows: rows,
       currentSort: -1,
       currentSortDescending: false,
-      pageSize: 10,
+      pageSize: this.props.tablePageSize,
       pageStartIndex: 0
     };
   }
