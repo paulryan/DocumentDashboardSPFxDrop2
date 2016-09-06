@@ -146,6 +146,28 @@ export default class ContentFetcher implements ISecurableObjectStore {
             }
             else {
               response = currentResponse;
+              // for (let i=0; i<10; i++) {
+              //   const newResults = response.results.slice();
+              //   for (let j=0; j<newResults.length; j++) {
+              //     debugger;
+              //     const r: ISecurableObject = newResults[j];
+              //     response.results.push({
+              //       crawlTime: r.crawlTime,
+              //       createdBy: r.createdBy,
+              //       fileExtension: r.fileExtension,
+              //       key: r.key + i.toString(),
+              //       lastModifiedTime: r.lastModifiedTime,
+              //       modifiedBy: r.modifiedBy,
+              //       sharedBy: r.sharedBy,
+              //       sharedWith: r.sharedWith,
+              //       siteID: r.siteID,
+              //       siteTitle: r.siteTitle,
+              //       title: r.title,
+              //       type: r.type,
+              //       url: r.url
+              //     });
+              //   }
+              // }
             }
             let getAnotherPage: boolean = false;
             if (!currentResponse.isError && response.results.length < this.props.limitRowsFetched) {
