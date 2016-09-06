@@ -10,6 +10,35 @@
     {
       "groupId": "de839066-3bbd-4531-96a1-ab6906e436ab",
       "group": { "default": "Reporting" },
+      "title": { "default": "Document Dashboard" },
+      "description": { "default": "Perform quick but powerful ad-hoc document reporting tasks" },
+      "officeFabricIconFontName": "Page",
+      "properties": {
+
+        "scope": 1,
+        "mode": 1,
+        "displayType": 2,
+        "chartAxis": 1,
+
+        "noResultsString": "No content was found",
+        "limitRowsFetched": 5000,
+
+        "tableColumnsShowSharedWith": false,
+        "tableColumnsShowCrawledTime": true,
+        "tableColumnsShowSiteTitle": true,
+        "tableColumnsShowCreatedByModifiedBy": true,
+        "tablePageSize": 20,
+        "limitPieChartSegments": 10,
+        "limitXAxisPlots": 10,
+        "chartAxisOrder": 1,
+
+        "sharedWithManagedPropertyName": "SharedWithDetailsQueryable",
+        "crawlTimeManagedPropertyName": "CrawlTime"
+      }
+    },
+    {
+      "groupId": "de839066-3bbd-4531-96a1-ab6906e436ab",
+      "group": { "default": "Reporting" },
       "title": { "default": "Ext Shared By Site" },
       "description": { "default": "Which sites have the most extenally shared content?" },
       "officeFabricIconFontName": "Group",
@@ -64,7 +93,7 @@
         "sharedWithManagedPropertyName": "SharedWithDetailsQueryable",
         "crawlTimeManagedPropertyName": "CrawlTime"
       }
-    },
+    }
 
   ]
 }

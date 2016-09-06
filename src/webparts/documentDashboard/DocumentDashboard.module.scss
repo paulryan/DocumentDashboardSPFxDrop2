@@ -9,7 +9,9 @@
 
 //@import "~office-ui-fabric/dist/sass/Fabric.Components";
 
-.ctSeries {
+.chartistContainer {
+  max-width: 1024px;
+  min-width: 300px;
   text {
       fill: #333 !important;
       color: #333 !important;
@@ -34,12 +36,16 @@
 
 .msTablePagerWrapper {
   text-align: center;
+  > div {
+    padding: 5px;
+  }
 }
 
 .msTablePager {
   width: 20px;
   height: 20px;
   display: inline-block;
+  margin: 5px;
 }
 
 .msTablePager:visited {

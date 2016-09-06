@@ -104,25 +104,27 @@ export default class Table extends React.Component<ITable, ITable> {
                 </tbody>
               </table>
               <div className={Table.tablePagerWrapperClasses}>
-              {(() => {
-                if (this.hasPrevPage) {
-                  return (
-                    <a href="#" onClick={this.prevPage} className={Table.tablePagerClasses}>
-                      <i className="ms-Icon ms-Icon--triangleLeft" aria-action="Previous page of results"></i>
-                    </a>
-                  );
-                }
-              })()}
-                <span>{Math.round(this.state.pageStartIndex / this.state.pageSize) + 1} of {this.pageCount}</span>
-              {(() => {
-                if (this.hasNextPage) {
-                  return (
-                    <a href="#" onClick={this.nextPage} className={Table.tablePagerClasses}>
-                      <i className="ms-Icon ms-Icon--triangleRight" aria-action="Next page of results"></i>
-                    </a>
-                  );
-                }
-              })()}
+              <div>
+                  {(() => {
+                    if (this.hasPrevPage) {
+                      return (
+                        <a href="#" onClick={this.prevPage} className={Table.tablePagerClasses}>
+                          <i className="ms-Icon ms-Icon--triangleLeft" aria-action="Previous page of results"></i>
+                        </a>
+                      );
+                    }
+                  })()}
+                    <span>{Math.round(this.state.pageStartIndex / this.state.pageSize) + 1} of {this.pageCount}</span>
+                  {(() => {
+                    if (this.hasNextPage) {
+                      return (
+                        <a href="#" onClick={this.nextPage} className={Table.tablePagerClasses}>
+                          <i className="ms-Icon ms-Icon--triangleRight" aria-action="Next page of results"></i>
+                        </a>
+                      );
+                    }
+                  })()}
+                </div>
                 <div>About {this.props.rows.length} results</div>
               </div>
             </div>

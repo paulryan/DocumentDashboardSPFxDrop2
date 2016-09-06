@@ -27,12 +27,15 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
   ];
 
   public render(): JSX.Element {
-      const chartContainerClasses: string = `${styles.ctSeries} ct-chart ct-perfect-fourth`;
+      const chartContainerClasses: string = `${styles.chartistContainer} ct-chart ct-golden-section`;
       return (
         <div className={chartContainerClasses}></div>
       );
-      // ct-golden-section
+
       // ct-perfect-fourth
+      // ct-golden-section
+      // ct-minor-seventh
+      // ct-major-tenth
       // ct-major-twelfth
   }
 
