@@ -254,7 +254,7 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
                   text: "Use the following link to download a search schema file to import the above managed properties:"
                 }),
                 PropertyPaneLink("linkproperty01", {
-                  href: "https://www.bing.com",
+                  href: "https://paulwryanspfx.azureedge.net/spfx/DocumentDashboardSearchConfiguration.xml",
                   text: "Search schema"
                 })
               ]

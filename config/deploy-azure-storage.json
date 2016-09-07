@@ -1,6 +1,6 @@
 {
   "workingDir": "./temp/deploy/",
-  "account": "<!-- STORAGE ACCOUNT NAME -->",
-  "container": "document-dashboard",
-  "accessKey": "<!-- ACCESS KEY -->"
+  "account": "paulwryan",
+  "container": "spfx",
+  "accessKey": "zY3DaJwaG3l1IMVKh94AtpeeNIT3FJqyOASkK9fPC3gCDrcHEWZ/5eAU4xn4iZmLqt3GmQr9bZ3NQSTsbLAg+A=="
 }
