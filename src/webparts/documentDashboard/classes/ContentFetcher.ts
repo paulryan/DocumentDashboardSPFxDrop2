@@ -54,9 +54,9 @@ export default class ContentFetcher implements ISecurableObjectStore {
     }
     myFql = `(${myFql})`;
 
-    const documentsFql: string = "ContentClass:STS_ListItem_DocumentLibrary";
-    const extSharedFql: string = "ViewableByExternalUsers:1";
-    const anonSharedFql: string = "ViewableByAnonymousUsers:1";
+    const documentsFql: string = "ContentClass=STS_ListItem_DocumentLibrary";
+    const extSharedFql: string = "ViewableByExternalUsers=1";
+    const anonSharedFql: string = "ViewableByAnonymousUsers=1";
 
     let graphFql: string = "";
     let modeFql: string = "";
@@ -64,19 +64,19 @@ export default class ContentFetcher implements ISecurableObjectStore {
       modeFql = `${documentsFql}`;
     }
     else if (self.props.mode === Mode.MyDocuments) {
-      modeFql = `${myFql} ${documentsFql}`;
+      modeFql = `${documentsFql} ${myFql}`;
     }
     else if (self.props.mode === Mode.AllExtSharedDocuments) {
       modeFql = `${extSharedFql}`;
     }
     else if (self.props.mode === Mode.MyExtSharedDocuments) {
-      modeFql = `${myFql} ${extSharedFql}`;
+      modeFql = `${extSharedFql} ${myFql}`;
     }
     else if (self.props.mode === Mode.AllAnonSharedDocuments) {
       modeFql = `${anonSharedFql}`;
     }
     else if (self.props.mode === Mode.MyAnonSharedDocuments) {
-      modeFql = `${myFql} ${anonSharedFql}`;
+      modeFql = `${anonSharedFql} ${myFql}`;
     }
     else if (self.props.mode === Mode.RecentlyModifiedDocuments) {
       const now: Date = new Date();
@@ -99,10 +99,28 @@ export default class ContentFetcher implements ISecurableObjectStore {
 
     let scopeFql: string = "";
     if (self.props.scope === SPScope.SiteCollection) {
-      scopeFql = " SiteId:" + EnsureBracesOnGuidString(self.props.context.pageContext.site.id.toString());
+      // HACK: site.id works in modern pages only, site.absoluteUrl works on classic pages only..
+      const siteId: any = self.props.context.pageContext.site.id;
+      const siteUrl: string = (self.props.context.pageContext.site as any).absoluteUrl;
+      if (siteId) {
+        const siteIdString: string = EnsureBracesOnGuidString(siteId.toString());
+        scopeFql = ` SiteId:${siteIdString}`;
+      }
+      else if (siteUrl) {
+        scopeFql = ` Path:${siteUrl}`;
+      }
     }
     else if (self.props.scope === SPScope.Site) {
-      scopeFql = " WebId:" + EnsureBracesOnGuidString(self.props.context.pageContext.web.id.toString());
+      // HACK: web.id works in modern pages only, web.absoluteUrl works on classic pages only..
+      const webId: any = self.props.context.pageContext.web.id;
+      const webUrl: string = (self.props.context.pageContext.web as any).absoluteUrl;
+      if (webId) {
+        const webIdString: string = EnsureBracesOnGuidString(webId.toString());
+        scopeFql = ` WebId:${webIdString}`;
+      }
+      else if (webUrl) {
+        scopeFql = ` Path:${webUrl}`;
+      }
     }
     else if (self.props.scope === SPScope.Tenant) {
       // do nothing

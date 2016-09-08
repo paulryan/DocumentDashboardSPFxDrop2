@@ -1,10 +1,10 @@
 {
   "solution": {
-    "name": "document-dashboard-client-side-solution",
+    "name": "Document-Dashboard",
     "id": "000c977b-0f67-4f08-894e-2154db278949",
     "version": "1.0.0.0"
   },
   "paths": {
-    "zippedPackage": "document-dashboard.spapp"
+    "zippedPackage": "Document-Dashboard.spapp"
   }
 }

@@ -33,7 +33,7 @@ export function ToColloquialDateString (then: Date): string {
           if (hoursAgo < 1) {
               returnString = "" + minsAgo + " minutes ago";
           }
-          if (hoursAgo === 1) {
+          else if (hoursAgo === 1) {
               returnString = "" + hoursAgo + " hour and " + minsAgo + " minutes ago";
           }
           else {
