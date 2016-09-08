@@ -35,65 +35,6 @@
         "sharedWithManagedPropertyName": "SharedWithDetailsQueryable",
         "crawlTimeManagedPropertyName": "CrawlTime"
       }
-    },
-    {
-      "groupId": "de839066-3bbd-4531-96a1-ab6906e436ab",
-      "group": { "default": "Reporting" },
-      "title": { "default": "Ext Shared By Site" },
-      "description": { "default": "Which sites have the most extenally shared content?" },
-      "officeFabricIconFontName": "Group",
-      "properties": {
-
-        "scope": 1,
-        "mode": 3,
-        "displayType": 2,
-        "chartAxis": 1,
-
-        "noResultsString": "No content was found",
-        "limitRowsFetched": 5000,
-
-        "tableColumnsShowSharedWith": false,
-        "tableColumnsShowCrawledTime": true,
-        "tableColumnsShowSiteTitle": true,
-        "tableColumnsShowCreatedByModifiedBy": true,
-        "tablePageSize": 10,
-        "limitPieChartSegments": 10,
-        "limitXAxisPlots": 10,
-        "chartAxisOrder": 1,
-
-        "sharedWithManagedPropertyName": "SharedWithDetailsQueryable",
-        "crawlTimeManagedPropertyName": "CrawlTime"
-      }
-    },
-    {
-      "groupId": "de839066-3bbd-4531-96a1-ab6906e436ab",
-      "group": { "default": "Reporting" },
-      "title": { "default": "Busy Delve Sites" },
-      "description": { "default": "Which sites should I be interested in?" },
-      "officeFabricIconFontName": "Group",
-      "properties": {
-
-        "scope": 1,
-        "mode": 9,
-        "displayType": 3,
-        "chartAxis": 1,
-
-        "noResultsString": "No content was found",
-        "limitRowsFetched": 5000,
-
-        "tableColumnsShowSharedWith": false,
-        "tableColumnsShowCrawledTime": true,
-        "tableColumnsShowSiteTitle": true,
-        "tableColumnsShowCreatedByModifiedBy": true,
-        "tablePageSize": 10,
-        "limitPieChartSegments": 10,
-        "limitXAxisPlots": 10,
-        "chartAxisOrder": 1,
-
-        "sharedWithManagedPropertyName": "SharedWithDetailsQueryable",
-        "crawlTimeManagedPropertyName": "CrawlTime"
-      }
     }
-
   ]
 }

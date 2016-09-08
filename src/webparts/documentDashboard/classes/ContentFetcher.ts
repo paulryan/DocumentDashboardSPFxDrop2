@@ -61,8 +61,7 @@ export default class ContentFetcher implements ISecurableObjectStore {
     let graphFql: string = "";
     let modeFql: string = "";
     if (self.props.mode === Mode.AllDocuments) {
-      //modeFql = `${documentsFql}`;
-      modeFql = "*";
+      modeFql = `${documentsFql}`;
     }
     else if (self.props.mode === Mode.MyDocuments) {
       modeFql = `${myFql} ${documentsFql}`;
