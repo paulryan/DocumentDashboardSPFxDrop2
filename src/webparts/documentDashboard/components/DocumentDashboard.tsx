@@ -341,6 +341,7 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
     this.state.results.forEach((securableObj) => {
       const newRow: ITableRow = { cells: [], key: securableObj.key };
       columns.forEach((columnName) => {
+        const key: string = columnName.sortableData;
         const cellSortableData: ISecurableObjectProperty<any> = securableObj[columnName.sortableData];
         if (cellSortableData) {
           const href: string = (columnName.sortableData === columnWithHref ? securableObj.url.data : null);
@@ -348,7 +349,7 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
             sortableData: cellSortableData.data,
             displayData: cellSortableData.displayValue,
             href: href,
-            key: columnName.sortableData
+            key: key
           });
         }
         else {
@@ -358,7 +359,7 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
             sortableData: "?",
             displayData: "",
             href: null,
-            key: securableObj.key + columnName.sortableData
+            key: key
           });
         }
       });

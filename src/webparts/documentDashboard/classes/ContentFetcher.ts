@@ -39,76 +39,146 @@ export default class ContentFetcher implements ISecurableObjectStore {
 
   public getContent(): Promise<IGetContentFuncResponse> {
     const self: ContentFetcher = this;
-    self.log.logInfo("getContent()");
+    self.log.logTime("getContent() entered");
 
     const rowLimit: number = 500;
-    const baseUri: string = self.props.context.pageContext.web.absoluteUrl + "/_api/search/query";
+    const finalUri: string = this.getSearchQueryUri();
+
+    const prom: Promise<IGetContentFuncResponse> = new Promise<IGetContentFuncResponse>((resolve: any, reject: any) => {
+      // Single request to determine rowCount
+      self.getPageOfContent(finalUri, 0, rowLimit)
+      .then((r1: IGetContentFuncResponse) => {
+        // Handle fetching additional pages in parallel
+        const rowsToFetch: number = this.props.limitRowsFetched < r1.totalRows ? this.props.limitRowsFetched : r1.totalRows;
+        const getMorePages: boolean = (!r1.isError && r1.rowCount < rowsToFetch && r1.rowCount === rowLimit);
+        if (getMorePages) {
+          self.getContentParallelBatchesRecursive(r1, finalUri, r1.rowCount, rowLimit, rowsToFetch)
+          .then((r2: IGetContentFuncResponse) => {
+            this.log.logTime("getContent() exited");
+            resolve(r2);
+          });
+        }
+        else {
+          this.log.logTime("getContent() exited");
+          resolve(r1);
+        }
+      });
+    });
+    return prom;
+  }
+
+  private getContentParallelBatchesRecursive(r1: IGetContentFuncResponse,
+          finalUri: string, startIndex: number, rowLimit: number, rowsToFetch: number): Promise<IGetContentFuncResponse> {
+    // In parallel
+    const maxParallelism: number = 6; // TODO: optimise this for very large data sets. This should be optimised and not a parameter.
+    const prom: Promise<IGetContentFuncResponse> = new Promise<IGetContentFuncResponse>((resolve: any, reject: any) => {
+      const promArray: Promise<IGetContentFuncResponse>[] = [];
+      let nextStartIndex = startIndex;
+      for (; nextStartIndex < rowsToFetch && promArray.length < maxParallelism; nextStartIndex += rowLimit) {
+        const p = this.getPageOfContent(finalUri, nextStartIndex, rowLimit);
+        promArray.push(p);
+      }
+      Promise.all(promArray)
+      .then((responses) => {
+        responses.forEach(r2 => {
+          if (!r1.isError) {
+            if (r2.isError) {
+              r1.isError = true;
+              r1.message = r2.message;
+            }
+            else {
+              r1.results.push(...r2.results);
+              r1.rowCount += r2.rowCount;
+            }
+          }
+        });
+        const allResponsesHitRowLimit: boolean = responses.every(r => !r.isError && r.rowCount === rowLimit);
+
+        // If more pages to fetch..
+        const getMorePages: boolean = (allResponsesHitRowLimit && r1.rowCount < rowsToFetch);
+        if (getMorePages) {
+          this.getContentParallelBatchesRecursive(r1, finalUri, r1.rowCount, rowLimit, rowsToFetch)
+          .then((r3: IGetContentFuncResponse) => {
+            resolve(r1);
+          });
+        }
+        else {
+          resolve(r1);
+        }
+      });
+    });
+    return prom;
+  }
+
+  private getSearchQueryUri(): string {
+    const baseUri: string = this.props.context.pageContext.web.absoluteUrl + "/_api/search/query";
 
     // "MY" should represent things I have created or edited or shared.
     // TODO: Can we get Graphy in a meaningful way?
-    const un: string = self.props.context.pageContext.user.loginName;
+    const un: string = this.props.context.pageContext.user.loginName;
     const me: string = un.substring(0, un.indexOf("@")); // TODO: get the query working with @ symbol.. .replace("@", "%40");
     let myFql: string = `EditorOWSUSER:${me} OR AuthorOWSUSER:${me}`;
-    if (self.props.sharedWithManagedPropertyName) {
-      myFql += ` OR ${self.props.sharedWithManagedPropertyName}:${me}`;
+    if (this.props.sharedWithManagedPropertyName) {
+      myFql += ` OR ${this.props.sharedWithManagedPropertyName}:${me}`;
     }
     myFql = `(${myFql})`;
 
-    const documentsFql: string = "ContentClass:STS_ListItem_DocumentLibrary";
-    const extSharedFql: string = "ViewableByExternalUsers:1";
-    const anonSharedFql: string = "ViewableByAnonymousUsers:1";
+    const documentsFql: string = "ContentClass=STS_ListItem_DocumentLibrary";
+    const extSharedFql: string = "ViewableByExternalUsers=1";
+    const anonSharedFql: string = "ViewableByAnonymousUsers=1";
 
     let graphFql: string = "";
     let modeFql: string = "";
-    if (self.props.mode === Mode.AllDocuments) {
+    if (this.props.mode === Mode.AllDocuments) {
       modeFql = `${documentsFql}`;
+      //modeFql = "*";
     }
-    else if (self.props.mode === Mode.MyDocuments) {
-      modeFql = `${myFql} ${documentsFql}`;
+    else if (this.props.mode === Mode.MyDocuments) {
+      modeFql = `${documentsFql} ${myFql} `;
     }
-    else if (self.props.mode === Mode.AllExtSharedDocuments) {
+    else if (this.props.mode === Mode.AllExtSharedDocuments) {
       modeFql = `${extSharedFql}`;
     }
-    else if (self.props.mode === Mode.MyExtSharedDocuments) {
-      modeFql = `${myFql} ${extSharedFql}`;
+    else if (this.props.mode === Mode.MyExtSharedDocuments) {
+      modeFql = `${extSharedFql} ${myFql}`;
     }
-    else if (self.props.mode === Mode.AllAnonSharedDocuments) {
+    else if (this.props.mode === Mode.AllAnonSharedDocuments) {
       modeFql = `${anonSharedFql}`;
     }
-    else if (self.props.mode === Mode.MyAnonSharedDocuments) {
-      modeFql = `${myFql} ${anonSharedFql}`;
+    else if (this.props.mode === Mode.MyAnonSharedDocuments) {
+      modeFql = `${anonSharedFql} ${myFql}`;
     }
-    else if (self.props.mode === Mode.RecentlyModifiedDocuments) {
+    else if (this.props.mode === Mode.RecentlyModifiedDocuments) {
       const now: Date = new Date();
       const earlier: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 14);
       modeFql = `${documentsFql} Write>${GetDateFqlString(earlier)}`;
     }
-    else if (self.props.mode === Mode.InactiveDocuments) {
+    else if (this.props.mode === Mode.InactiveDocuments) {
       const now: Date = new Date();
       const earlier: Date = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
       modeFql = `${documentsFql} Write<${GetDateFqlString(earlier)}`;
     }
-    else if (self.props.mode === Mode.Delve) {
+    else if (this.props.mode === Mode.Delve) {
       modeFql = `${documentsFql}`;
       graphFql = "properties='GraphQuery:ACTOR(ME)'";
     }
     else {
-      self.log.logError("Unsupported mode: " + self.props.mode);
+      this.log.logError("Unsupported mode: " + this.props.mode);
       return null;
     }
 
     let scopeFql: string = "";
-    if (self.props.scope === SPScope.SiteCollection) {
-      scopeFql = " SiteId:" + EnsureBracesOnGuidString(self.props.context.pageContext.site.id.toString());
+    if (this.props.scope === SPScope.SiteCollection) {
+      scopeFql = " SiteId:" + EnsureBracesOnGuidString(this.props.context.pageContext.site.id.toString());
     }
-    else if (self.props.scope === SPScope.Site) {
-      scopeFql = " WebId:" + EnsureBracesOnGuidString(self.props.context.pageContext.web.id.toString());
+    else if (this.props.scope === SPScope.Site) {
+      scopeFql = " WebId:" + EnsureBracesOnGuidString(this.props.context.pageContext.web.id.toString());
     }
-    else if (self.props.scope === SPScope.Tenant) {
+    else if (this.props.scope === SPScope.Tenant) {
       // do nothing
     }
     else {
-      self.log.logError("Unsupported scope: " + self.props.scope);
+      this.log.logError("Unsupported scope: " + this.props.scope);
       return null;
     }
 
@@ -125,91 +195,51 @@ export default class ContentFetcher implements ISecurableObjectStore {
     if (graphFql) {
       finalUri += "&" + graphFql;
     }
-
-    // TODO: support parallel requests
-    const prom: Promise<IGetContentFuncResponse> = new Promise<IGetContentFuncResponse>((resolve: any, reject: any) => {
-      self.queryForAllItems(finalUri, 0, rowLimit, null, resolve, reject);
-    });
-    return prom;
+    return finalUri;
   }
 
-  private queryForAllItems(uri: string, startIndex: number, rowlimit: number, response: IGetContentFuncResponse, resolve: any, reject: any): void {
+  private getPageOfContent(uri: string, startIndex: number, rowLimit: number): Promise<IGetContentFuncResponse> {
     // Don't fetch more items than allowed
-    if (startIndex + rowlimit > this.props.limitRowsFetched) {
-      rowlimit = this.props.limitRowsFetched - startIndex;
+    if (startIndex + rowLimit > this.props.limitRowsFetched) {
+      rowLimit = this.props.limitRowsFetched - startIndex;
     }
-    const pagedUri: string = uri + "&startRow=" + startIndex + "&rowLimit=" + rowlimit;
+    const pagedUri: string = uri + "&startRow=" + startIndex + "&rowLimit=" + rowLimit;
     this.log.logInfo("Submitting request to " + pagedUri);
 
     const headers: Headers = new Headers();
     headers.append("odata-version", "3.0");
     headers.append("accept", "application/json;odata=nometadata");
-    this.props.context.httpClient.get(pagedUri, { headers: headers })
-      .then((r1: Response) => {
-        this.log.logInfo("Recieved response from " + pagedUri);
-        if (r1.ok) {
-          r1.json().then((r) => {
-            const searchResponse: ISearchResponse = TransformSearchResponse(r);
-            const currentResponse: IGetContentFuncResponse = this.transformSearchResultsToResponseObject(searchResponse, this.props.noResultsString);
-            if (response) {
-              response.results.push(...currentResponse.results);
-            }
-            else {
-              response = currentResponse;
-              // for (let i=0; i<10; i++) {
-              //   const newResults = response.results.slice();
-              //   for (let j=0; j<newResults.length; j++) {
-              //     debugger;
-              //     const r: ISecurableObject = newResults[j];
-              //     response.results.push({
-              //       crawlTime: r.crawlTime,
-              //       createdBy: r.createdBy,
-              //       fileExtension: r.fileExtension,
-              //       key: r.key + i.toString(),
-              //       lastModifiedTime: r.lastModifiedTime,
-              //       modifiedBy: r.modifiedBy,
-              //       sharedBy: r.sharedBy,
-              //       sharedWith: r.sharedWith,
-              //       siteID: r.siteID,
-              //       siteTitle: r.siteTitle,
-              //       title: r.title,
-              //       type: r.type,
-              //       url: r.url
-              //     });
-              //   }
-              // }
-            }
-            let getAnotherPage: boolean = false;
-            if (!currentResponse.isError && response.results.length < this.props.limitRowsFetched) {
-              // Get the next page if results === rowlimit
-              if (searchResponse.rowCount === rowlimit && startIndex + rowlimit < searchResponse.totalRows) {
-                getAnotherPage = true;
-              }
-            }
-            if (getAnotherPage) {
-              // Recursive call
-              this.log.logInfo("Fetching an additional page of results");
-              this.queryForAllItems(uri, startIndex + rowlimit, rowlimit, response, resolve, reject);
-            }
-            else {
-              resolve(response);
-            }
-          });
-        }
-        else {
+
+    const prom: Promise<IGetContentFuncResponse> = new Promise<IGetContentFuncResponse>((resolve: any, reject: any) => {
+      this.props.context.httpClient.get(pagedUri, { headers: headers })
+      .then(
+        (r1: Response) => {
+          this.log.logInfo("Recieved response from " + pagedUri);
+          if (r1.ok) {
+            r1.json().then((r) => {
+              const searchResponse: ISearchResponse = TransformSearchResponse(r);
+              const currentResponse: IGetContentFuncResponse = this.transformSearchResultsToResponseObject(searchResponse, this.props.noResultsString);
+              resolve(currentResponse);
+            });
+          }
+          else {
+            reject({
+              extContent: [],
+              controlMode: ControlMode.Message,
+              message: r1.statusText
+            });
+          }
+        },
+        (error: any) => {
           reject({
             extContent: [],
             controlMode: ControlMode.Message,
-            message: r1.statusText
+            message: "Sorry, there was an error submitting the request"
           });
         }
-      }, (error: any) => {
-        reject({
-          extContent: [],
-          controlMode: ControlMode.Message,
-          message: "Sorry, there was an error submitting the request"
-        });
-      });
+      );
+    });
+    return prom;
   }
 
   private transformSearchResultsToResponseObject(searchResponse: ISearchResponse, noResultsString: string): IGetContentFuncResponse {
@@ -304,7 +334,10 @@ export default class ContentFetcher implements ISecurableObjectStore {
     return {
       results: securableObjects,
       isError: isError,
-      message: message
+      message: message,
+      rowCount: searchResponse.rowCount,
+      totalRows: searchResponse.totalRows,
+      totalRowsIncludingDuplicates: searchResponse.totalRowsIncludingDuplicates
     };
   }
 }

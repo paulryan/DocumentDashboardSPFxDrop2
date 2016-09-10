@@ -4,6 +4,17 @@ export class Logger {
     this.currentContext = currentContext;
   }
 
+  private lastTime: Date = new Date();
+
+  public logTime (message: string): void {
+    const thisTime: Date = new Date();
+    const time: Date = new Date(thisTime.getTime() - this.lastTime.getTime());
+    const timeString: string = `${time.getMinutes()}.${time.getSeconds()}:${time.getMilliseconds()}`;
+
+    this.lastTime = thisTime;
+    this._log("TIME ", `${timeString} ${message}`);
+  }
+
   public logInfo (message: string): void {
     this._log("INFO ", message);
   }

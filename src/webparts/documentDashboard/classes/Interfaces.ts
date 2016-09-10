@@ -26,6 +26,9 @@ export interface IGetContentFuncResponse {
   results: ISecurableObject[];
   message: string;
   isError: boolean;
+  rowCount: number;
+  totalRows: number;
+  totalRowsIncludingDuplicates: number;
 }
 
 export interface IDocumentDashboardProps {
