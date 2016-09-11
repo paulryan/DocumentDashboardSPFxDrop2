@@ -1,7 +1,5 @@
 import * as Chartist from "chartist";
 
-import "../DocumentDashboard.module.css";
-
 import {
   ChartistBase
 } from "./ChartistBase";
@@ -10,9 +8,11 @@ export default class ChartistPie extends ChartistBase {
 
   public renderChart(): void {
     const maxLabelLength: number = 12;
-    const data: Chartist.IChartistData = this.getChartistData();
+    const data: Chartist.IChartistData = this.getChartistData(true);
     const dataSeries: number[] = data.series as number[];
     const seriesTotal: number = dataSeries.reduce(this.reduceSumNumber);
+
+    // Need to remove
 
     const options: Chartist.IPieChartOptions = {
       chartPadding: {

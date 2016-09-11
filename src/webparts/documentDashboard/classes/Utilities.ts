@@ -7,19 +7,30 @@ export function GetDateFqlString (date: Date): string {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`; // 1900-01-01
 }
 
-export function ToShortDateString (date: Date): string {
-  return `${ToVeryShortDateString(date)} ${date.getFullYear()}`;
-}
-
-export function ToVeryShortDateString (date: Date): string {
-  // e.g. 18 Aug
-  const months: string[] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-  const ds: string = `${date.getDate()} ${months[date.getMonth()]}`;
+const months: string[] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+export function ToVeryShortDateString (date: Date, showDate: boolean, showMonth: boolean, showYear: boolean): string {
+  // e.g. 18 Aug 09
+  let ds: string = "";
+  if (showDate) {
+    ds = date.getDate().toString();
+  }
+  if (showMonth) {
+    if (ds.length > 0) {
+      ds += " ";
+    }
+    ds += months[date.getMonth()];
+  }
+  if (showYear) {
+    if (ds.length > 0) {
+      ds += " ";
+    }
+    ds += date.getFullYear().toString().substr(2);
+  }
   return ds;
 }
 
 export function ToColloquialDateString (then: Date): string {
-  let returnString: string = ToShortDateString(then);
+  let returnString: string = ToVeryShortDateString(then, true, true, true);
   const now: Date = new Date();
   const minsInHr: number = 60;
 

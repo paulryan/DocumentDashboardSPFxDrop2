@@ -132,6 +132,7 @@ export interface IChartItem {
   label: string;
   data: string;
   weight: number;
+  xAxis?: number;
 }
 
 export interface ITable {

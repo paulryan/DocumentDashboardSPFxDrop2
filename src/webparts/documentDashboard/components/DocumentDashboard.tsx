@@ -50,14 +50,6 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
   private isUpdateStateInProgress: boolean = false;
   private hasContentBeenFetched: boolean = false;
 
-  // Lifecycle methods are called as follows:
-  // componentWillMount     (set state to Loading)
-  // render                 (loading)
-  // componentDidMount      (fetch ext content)
-  // shouldComponentUpdate  (on response received)
-  // render                 (content)
-  // componentDidUpdate     (ignored as request in progress..?)
-
   constructor() {
     super();
     this.log = new Logger("DocumentDashboard");
@@ -288,16 +280,14 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
         });
       }
       else if (chartAxis === ChartAxis.Time) {
-
-        // TODO: Add items with weight 0 for every missing day?
-
         if (securableObj.lastModifiedTime.data) {
           const d: Date = securableObj.lastModifiedTime.data;
-          const roundedDate: Date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+          const roundedDate: Date = new Date(d.getFullYear(), d.getMonth()); // , d.getDate()
           dataPoints.push({
-            label: ToVeryShortDateString(roundedDate),
+            label: ToVeryShortDateString(roundedDate, false, true, true),
             data: roundedDate.getTime().toString(),
-            weight: 1
+            weight: 1,
+            xAxis: roundedDate.getTime()
           });
         }
       }

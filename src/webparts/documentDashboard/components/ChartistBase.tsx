@@ -55,7 +55,7 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
     }
   }
 
-  protected getChartistData(): Chartist.IChartistData {
+  protected getChartistData(suppressXAxisPlots: boolean): Chartist.IChartistData {
     // Create a object of chart items
     const chartItemDatas: IChartItem[] = [];
     const chartItemsDict: any = {};
@@ -92,17 +92,30 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
       finalDataToChart = chartItemDatas;
     }
 
-    // Sort on data to support timeline charts
-    finalDataToChart.sort((a, b) => a.data.localeCompare(b.data));
-
+    // Sort on data to support timeline charts (if xAxis points are defined)
+    let isUsingXAxis: boolean = false;
+    if (!suppressXAxisPlots) {
+      isUsingXAxis = finalDataToChart.every(c => typeof c.xAxis === "number");
+      if (isUsingXAxis) {
+        finalDataToChart.sort((a, b) => a.xAxis - b.xAxis);
+      }
+    }
     const data: Chartist.IChartistData = {
       labels: [],
       series: []
     };
 
-    finalDataToChart.forEach(d => {
+    finalDataToChart.forEach((d, i) => {
       (data.labels as string[]).push(d.label);
-      (data.series as number[]).push(d.weight);
+      if (suppressXAxisPlots) {
+        (data.series as number[]).push(d.weight);
+      }
+      else {
+        (data.series as any[]).push({
+          x: isUsingXAxis ? d.xAxis : i,
+          y: d.weight
+        });
+      }
     });
 
     return data;

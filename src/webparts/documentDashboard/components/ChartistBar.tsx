@@ -1,7 +1,5 @@
 import * as Chartist from "chartist";
 
-import "../DocumentDashboard.module.css";
-
 import {
   ChartistBase
 } from "./ChartistBase";
@@ -10,7 +8,7 @@ export default class ChartistBar extends ChartistBase {
 
   public renderChart(): void {
     const maxLabelLength: number = 20;
-    const data: Chartist.IChartistData = this.getChartistData();
+    const data: Chartist.IChartistData = this.getChartistData(false);
 
     const options: Chartist.IBarChartOptions = {
       axisY: {
