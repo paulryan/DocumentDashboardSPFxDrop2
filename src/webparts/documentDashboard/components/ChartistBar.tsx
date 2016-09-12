@@ -1,7 +1,5 @@
 import * as Chartist from "chartist";
 
-import "../DocumentDashboard.module.css";
-
 import {
   ChartistBase
 } from "./ChartistBase";
@@ -10,7 +8,7 @@ export default class ChartistBar extends ChartistBase {
 
   public renderChart(): void {
     const maxLabelLength: number = 20;
-    const data: Chartist.IChartistData = this.getChartistData();
+    const data: Chartist.IChartistData = this.getChartistData(false);
 
     const options: Chartist.IBarChartOptions = {
       axisY: {
@@ -27,7 +25,15 @@ export default class ChartistBar extends ChartistBase {
         right: 5,
         bottom: 30,
         left: 5
-      }
+      },
+      plugins: [
+        Chartist.plugins.tooltip({
+          transformTooltipTextFnc: (xyLabel: string): string => {
+            const coordsArray: string[] = xyLabel.split(",");
+            return "Count: " + coordsArray[coordsArray.length-1];
+          }
+        })
+      ]
     };
 
     // Bar graphs take an array of series as they support many bars

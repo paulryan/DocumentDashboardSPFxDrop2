@@ -26,6 +26,9 @@ export interface IGetContentFuncResponse {
   results: ISecurableObject[];
   message: string;
   isError: boolean;
+  rowCount: number;
+  totalRows: number;
+  totalRowsIncludingDuplicates: number;
 }
 
 export interface IDocumentDashboardProps {
@@ -129,6 +132,7 @@ export interface IChartItem {
   label: string;
   data: string;
   weight: number;
+  xAxis?: number;
 }
 
 export interface ITable {

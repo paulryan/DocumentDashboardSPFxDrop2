@@ -55,7 +55,10 @@ export default class MockContentFetcher implements ISecurableObjectStore {
         resolve({
           results: this.content,
           isError: false,
-          message: "Mocked documents"
+          message: "Mocked documents",
+          rowCount: 2,
+          totalRows: 2,
+          totalRowsIncludingDuplicates: 2
         });
     });
   }

@@ -50,14 +50,6 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
   private isUpdateStateInProgress: boolean = false;
   private hasContentBeenFetched: boolean = false;
 
-  // Lifecycle methods are called as follows:
-  // componentWillMount     (set state to Loading)
-  // render                 (loading)
-  // componentDidMount      (fetch ext content)
-  // shouldComponentUpdate  (on response received)
-  // render                 (content)
-  // componentDidUpdate     (ignored as request in progress..?)
-
   constructor() {
     super();
     this.log = new Logger("DocumentDashboard");
@@ -288,16 +280,14 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
         });
       }
       else if (chartAxis === ChartAxis.Time) {
-
-        // TODO: Add items with weight 0 for every missing day?
-
         if (securableObj.lastModifiedTime.data) {
           const d: Date = securableObj.lastModifiedTime.data;
-          const roundedDate: Date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+          const roundedDate: Date = new Date(d.getFullYear(), d.getMonth()); // , d.getDate()
           dataPoints.push({
-            label: ToVeryShortDateString(roundedDate),
+            label: ToVeryShortDateString(roundedDate, false, true, true),
             data: roundedDate.getTime().toString(),
-            weight: 1
+            weight: 1,
+            xAxis: roundedDate.getTime()
           });
         }
       }
@@ -341,6 +331,7 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
     this.state.results.forEach((securableObj) => {
       const newRow: ITableRow = { cells: [], key: securableObj.key };
       columns.forEach((columnName) => {
+        const key: string = columnName.sortableData;
         const cellSortableData: ISecurableObjectProperty<any> = securableObj[columnName.sortableData];
         if (cellSortableData) {
           const href: string = (columnName.sortableData === columnWithHref ? securableObj.url.data : null);
@@ -348,7 +339,7 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
             sortableData: cellSortableData.data,
             displayData: cellSortableData.displayValue,
             href: href,
-            key: columnName.sortableData
+            key: key
           });
         }
         else {
@@ -358,7 +349,7 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
             sortableData: "?",
             displayData: "",
             href: null,
-            key: securableObj.key + columnName.sortableData
+            key: key
           });
         }
       });
