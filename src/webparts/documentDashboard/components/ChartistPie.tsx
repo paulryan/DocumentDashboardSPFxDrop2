@@ -21,14 +21,15 @@ export default class ChartistPie extends ChartistBase {
       donut: true,
       labelOffset: 50,
       labelDirection: "explode",
-      // labelInterpolationFnc: (label: string, index: number): string => {
-      //   const valueAsNumber: number = (data.series[index] as Chartist.IChartistSeriesData).value as number;
-      //   const valueAsPercentage: number = Math.round(valueAsNumber / seriesTotal * 1000) / 10;
-      //   if (label && label.length > maxLabelLength) {
-      //     label = label.substr(0, maxLabelLength) + "...";
-      //   }
-      //   return `${valueAsPercentage}% ${label}`;
-      // },
+      labelInterpolationFnc: (label: string, index: number): string => {
+        //const valueAsNumber: number = (data.series[index] as Chartist.IChartistSeriesData).value as number;
+        //const valueAsPercentage: number = Math.round(valueAsNumber / seriesTotal * 1000) / 10;
+        if (label && label.length > maxLabelLength) {
+          label = label.substr(0, maxLabelLength) + "...";
+        }
+        //return `${valueAsPercentage}% ${label}`;
+        return label;
+      },
       plugins: [
         Chartist.plugins.tooltip({
           transformTooltipTextFnc: (value: string): string => {

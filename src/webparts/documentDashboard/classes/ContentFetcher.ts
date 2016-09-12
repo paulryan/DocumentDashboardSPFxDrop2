@@ -133,32 +133,19 @@ export default class ContentFetcher implements ISecurableObjectStore {
       modeFql = `${documentsFql}`;
       //modeFql = "*";
     }
-<<<<<<< HEAD
-    else if (self.props.mode === Mode.MyDocuments) {
-      modeFql = `${documentsFql} ${myFql}`;
-=======
     else if (this.props.mode === Mode.MyDocuments) {
       modeFql = `${documentsFql} ${myFql} `;
->>>>>>> 2d6185a266eb54c0fb90cd5024c4b949fbf7e914
     }
     else if (this.props.mode === Mode.AllExtSharedDocuments) {
       modeFql = `${extSharedFql}`;
     }
-<<<<<<< HEAD
-    else if (self.props.mode === Mode.MyExtSharedDocuments) {
-=======
     else if (this.props.mode === Mode.MyExtSharedDocuments) {
->>>>>>> 2d6185a266eb54c0fb90cd5024c4b949fbf7e914
       modeFql = `${extSharedFql} ${myFql}`;
     }
     else if (this.props.mode === Mode.AllAnonSharedDocuments) {
       modeFql = `${anonSharedFql}`;
     }
-<<<<<<< HEAD
-    else if (self.props.mode === Mode.MyAnonSharedDocuments) {
-=======
     else if (this.props.mode === Mode.MyAnonSharedDocuments) {
->>>>>>> 2d6185a266eb54c0fb90cd5024c4b949fbf7e914
       modeFql = `${anonSharedFql} ${myFql}`;
     }
     else if (this.props.mode === Mode.RecentlyModifiedDocuments) {
@@ -181,11 +168,10 @@ export default class ContentFetcher implements ISecurableObjectStore {
     }
 
     let scopeFql: string = "";
-<<<<<<< HEAD
-    if (self.props.scope === SPScope.SiteCollection) {
+    if (this.props.scope === SPScope.SiteCollection) {
       // HACK: site.id works in modern pages only, site.absoluteUrl works on classic pages only..
-      const siteId: any = self.props.context.pageContext.site.id;
-      const siteUrl: string = (self.props.context.pageContext.site as any).absoluteUrl;
+      const siteId: any = this.props.context.pageContext.site.id;
+      const siteUrl: string = (this.props.context.pageContext.site as any).absoluteUrl;
       if (siteId) {
         const siteIdString: string = EnsureBracesOnGuidString(siteId.toString());
         scopeFql = ` SiteId:${siteIdString}`;
@@ -194,10 +180,10 @@ export default class ContentFetcher implements ISecurableObjectStore {
         scopeFql = ` Path:${siteUrl}`;
       }
     }
-    else if (self.props.scope === SPScope.Site) {
+    else if (this.props.scope === SPScope.Site) {
       // HACK: web.id works in modern pages only, web.absoluteUrl works on classic pages only..
-      const webId: any = self.props.context.pageContext.web.id;
-      const webUrl: string = (self.props.context.pageContext.web as any).absoluteUrl;
+      const webId: any = this.props.context.pageContext.web.id;
+      const webUrl: string = (this.props.context.pageContext.web as any).absoluteUrl;
       if (webId) {
         const webIdString: string = EnsureBracesOnGuidString(webId.toString());
         scopeFql = ` WebId:${webIdString}`;
@@ -205,13 +191,6 @@ export default class ContentFetcher implements ISecurableObjectStore {
       else if (webUrl) {
         scopeFql = ` Path:${webUrl}`;
       }
-=======
-    if (this.props.scope === SPScope.SiteCollection) {
-      scopeFql = " SiteId:" + EnsureBracesOnGuidString(this.props.context.pageContext.site.id.toString());
-    }
-    else if (this.props.scope === SPScope.Site) {
-      scopeFql = " WebId:" + EnsureBracesOnGuidString(this.props.context.pageContext.web.id.toString());
->>>>>>> 2d6185a266eb54c0fb90cd5024c4b949fbf7e914
     }
     else if (this.props.scope === SPScope.Tenant) {
       // do nothing
