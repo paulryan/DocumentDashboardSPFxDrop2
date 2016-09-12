@@ -7,7 +7,7 @@ import {
 export default class ChartistPie extends ChartistBase {
 
   public renderChart(): void {
-    const maxLabelLength: number = 12;
+    const maxLabelLength: number = 16;
     const data: Chartist.IChartistData = this.getChartistData(true);
     const seriesTotal: number = (data.series as Chartist.IChartistSeriesData[]).map(d => d.value).reduce(this.reduceSumNumber);
 
@@ -25,7 +25,7 @@ export default class ChartistPie extends ChartistBase {
         //const valueAsNumber: number = (data.series[index] as Chartist.IChartistSeriesData).value as number;
         //const valueAsPercentage: number = Math.round(valueAsNumber / seriesTotal * 1000) / 10;
         if (label && label.length > maxLabelLength) {
-          label = label.substr(0, maxLabelLength) + "...";
+          label = label.substr(0, maxLabelLength).trim() + "...";
         }
         //return `${valueAsPercentage}% ${label}`;
         return label;
