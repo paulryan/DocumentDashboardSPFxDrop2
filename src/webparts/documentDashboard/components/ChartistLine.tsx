@@ -46,7 +46,15 @@ export default class ChartistLine extends ChartistBase {
         right: 30,
         bottom: 30,
         left: 30
-      }
+      },
+      plugins: [
+        Chartist.plugins.tooltip({
+          transformTooltipTextFnc: (xyLabel: string): string => {
+            const coordsArray: string[] = xyLabel.split(",");
+            return "Count: " + coordsArray[coordsArray.length-1];
+          }
+        })
+      ]
     };
 
     // Line graphs take an array of series as they support many lines

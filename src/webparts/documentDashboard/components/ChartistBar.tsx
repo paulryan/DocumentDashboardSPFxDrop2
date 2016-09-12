@@ -25,7 +25,15 @@ export default class ChartistBar extends ChartistBase {
         right: 5,
         bottom: 30,
         left: 5
-      }
+      },
+      plugins: [
+        Chartist.plugins.tooltip({
+          transformTooltipTextFnc: (xyLabel: string): string => {
+            const coordsArray: string[] = xyLabel.split(",");
+            return "Count: " + coordsArray[coordsArray.length-1];
+          }
+        })
+      ]
     };
 
     // Bar graphs take an array of series as they support many bars

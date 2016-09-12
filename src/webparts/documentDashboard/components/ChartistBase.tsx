@@ -1,5 +1,8 @@
 import * as Chartist from "chartist";
+// import * as ChartistTooltips from "chartist-plugin-tooltip";
 import * as React from "react";
+
+import "chartist-plugin-tooltips";
 
 import {
   IChart,
@@ -108,12 +111,16 @@ export abstract class ChartistBase extends React.Component<IChart, IChart> {
     finalDataToChart.forEach((d, i) => {
       (data.labels as string[]).push(d.label);
       if (suppressXAxisPlots) {
-        (data.series as number[]).push(d.weight);
+        (data.series as Chartist.IChartistSeriesData[]).push({
+          value: d.weight,
+          meta: d.label
+        });
       }
       else {
         (data.series as any[]).push({
           x: isUsingXAxis ? d.xAxis : i,
-          y: d.weight
+          y: d.weight,
+          meta: d.label
         });
       }
     });

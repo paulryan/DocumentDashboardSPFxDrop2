@@ -9,6 +9,7 @@
     "@microsoft/sp-client-base": "~0.2.0",
     "@microsoft/sp-client-preview": "~0.2.0",
     "chartist": "^0.9.8",
+    "chartist-plugin-tooltips": "0.0.15",
     "office-ui-fabric-react": "0.36.0",
     "react": "0.14.8",
     "react-dom": "0.14.8"

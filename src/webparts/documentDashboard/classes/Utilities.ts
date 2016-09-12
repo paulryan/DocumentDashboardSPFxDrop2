@@ -24,7 +24,7 @@ export function ToVeryShortDateString (date: Date, showDate: boolean, showMonth:
     if (ds.length > 0) {
       ds += " ";
     }
-    ds += date.getFullYear().toString().substr(2);
+    ds += `'${date.getFullYear().toString().substr(2)}`;
   }
   return ds;
 }

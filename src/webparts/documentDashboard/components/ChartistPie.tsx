@@ -9,10 +9,7 @@ export default class ChartistPie extends ChartistBase {
   public renderChart(): void {
     const maxLabelLength: number = 12;
     const data: Chartist.IChartistData = this.getChartistData(true);
-    const dataSeries: number[] = data.series as number[];
-    const seriesTotal: number = dataSeries.reduce(this.reduceSumNumber);
-
-    // Need to remove
+    const seriesTotal: number = (data.series as Chartist.IChartistSeriesData[]).map(d => d.value).reduce(this.reduceSumNumber);
 
     const options: Chartist.IPieChartOptions = {
       chartPadding: {
@@ -24,14 +21,22 @@ export default class ChartistPie extends ChartistBase {
       donut: true,
       labelOffset: 50,
       labelDirection: "explode",
-      labelInterpolationFnc: (label: string, index: number): string => {
-        const valueAsNumber: number = data.series[index] as number;
-        const valueAsPercentage: number = Math.round(valueAsNumber / seriesTotal * 1000) / 10;
-        if (label && label.length > maxLabelLength) {
-          label = label.substr(0, maxLabelLength) + "...";
-        }
-        return `${valueAsPercentage}% ${label}`;
-      }
+      // labelInterpolationFnc: (label: string, index: number): string => {
+      //   const valueAsNumber: number = (data.series[index] as Chartist.IChartistSeriesData).value as number;
+      //   const valueAsPercentage: number = Math.round(valueAsNumber / seriesTotal * 1000) / 10;
+      //   if (label && label.length > maxLabelLength) {
+      //     label = label.substr(0, maxLabelLength) + "...";
+      //   }
+      //   return `${valueAsPercentage}% ${label}`;
+      // },
+      plugins: [
+        Chartist.plugins.tooltip({
+          transformTooltipTextFnc: (value: string): string => {
+            const valueAsPercentage: number = Math.round(parseInt(value) / seriesTotal * 1000) / 10;
+            return `Count: ${value} (${valueAsPercentage}%)`;
+          }
+        })
+      ]
     };
 
     let pie: any = new Chartist.Pie(this.getTargetElement(), data, options, this.responsiveOptions);
