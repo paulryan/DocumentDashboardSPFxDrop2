@@ -22,11 +22,13 @@ import {
 import styles from "../DocumentDashboard.module.scss";
 
 export default class Table extends React.Component<ITable, ITable> {
-  private static tableClasses: string = css("ms-Table");
-  private static tableBodyClasses: string = css("ms-bgColor-white");
-  private static tableRowClasses: string = css("ms-Table-row");
+  private static tableClasses: string = css(styles["ms-Table"]);
+  private static tableBodyClasses: string = css(styles["ms-bgColor-white"]);
+  private static tableRowClasses: string = css(styles["ms-Table-row"]);
   private static tablePagerWrapperClasses: string = css(styles.msTablePagerWrapper);
-  private static tablePagerClasses: string = css(styles.msTablePager, "ms-font-l");
+  private static tablePagerClasses: string = css(styles.msTablePager, styles["ms-font-l"]);
+  protected static tablePagePrevClasses: string = css(styles["ms-Icon"], styles["ms-Icon--triangleLeft"]);
+  protected static tablePageNextClasses: string = css(styles["ms-Icon"], styles["ms-Icon--triangleRight"]);
 
   private maxPageStartIndex: number = 0;
   private minPageStartIndex: number = 0;
@@ -109,7 +111,7 @@ export default class Table extends React.Component<ITable, ITable> {
                     if (this.hasPrevPage) {
                       return (
                         <a href="#" onClick={this.prevPage} className={Table.tablePagerClasses}>
-                          <i className="ms-Icon ms-Icon--triangleLeft" aria-action="Previous page of results"></i>
+                          <i className={Table.tablePagePrevClasses} aria-action="Previous page of results"></i>
                         </a>
                       );
                     }
@@ -119,7 +121,7 @@ export default class Table extends React.Component<ITable, ITable> {
                     if (this.hasNextPage) {
                       return (
                         <a href="#" onClick={this.nextPage} className={Table.tablePagerClasses}>
-                          <i className="ms-Icon ms-Icon--triangleRight" aria-action="Next page of results"></i>
+                          <i className={Table.tablePageNextClasses} aria-action="Next page of results"></i>
                         </a>
                       );
                     }

@@ -11,6 +11,9 @@
 
 @import "chartist-plugin-tooltip.css";
 //@import "~chartist-plugin-tooltips/dist/chartist-plugin-tooltip.css";
+@import "~office-ui-fabric/dist/sass/Fabric.scss";
+@import "~office-ui-fabric/dist/components/Table/Table.scss";
+@import "~office-ui-fabric/dist/components/Link/Link.scss";
 
 .chartistContainer {
   max-width: 1024px;

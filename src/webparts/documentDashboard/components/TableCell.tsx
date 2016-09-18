@@ -12,7 +12,9 @@ import {
 import styles from "../DocumentDashboard.module.scss";
 
 export class TableCellHeader extends React.Component<ITableCellHeader, {}> {
-  protected static tableCellHeaderSortClasses: string = css(styles.msTableHeaderCell, "ms-Link");
+  protected static tableCellHeaderSortClasses: string = css(styles.msTableHeaderCell, styles["ms-Link"]);
+  protected static tableCellChevronDownClasses: string = css(styles["ms-Icon"], styles["ms-Icon--chevronThinDown"]);
+  protected static tableCellChevronUpClasses: string = css(styles["ms-Icon"], styles["ms-Icon--chevronThinUp"]);
 
   public render(): JSX.Element {
     return (
@@ -22,10 +24,10 @@ export class TableCellHeader extends React.Component<ITableCellHeader, {}> {
           {(() => {
             if (this.props.isSorted) {
               if (!this.props.sortDirDesc) {
-                return <i className="ms-Icon ms-Icon--chevronThinUp"></i>;
+                return <i className={TableCellHeader.tableCellChevronUpClasses}></i>;
               }
               else if (this.props.sortDirDesc) {
-                return <i className="ms-Icon ms-Icon--chevronThinDown"></i>;
+                return <i className={TableCellHeader.tableCellChevronDownClasses}></i>;
               }
             }
           })()}
@@ -36,8 +38,8 @@ export class TableCellHeader extends React.Component<ITableCellHeader, {}> {
 }
 
 export class TableCell extends React.Component<ITableCell<any>, {}> {
-  public static tableCellClasses: string = css(styles.msTableCellNoWrap, styles.autoCursor, "ms-Table-cell");
-  protected static tableCellHyperlinkClasses: string = css("ms-Link");
+  public static tableCellClasses: string = css(styles.msTableCellNoWrap, styles.autoCursor, styles["ms-Table-cell"]);
+  protected static tableCellHyperlinkClasses: string = css(styles["ms-Link"]);
 
   public render(): JSX.Element {
     if (this.props.href) {

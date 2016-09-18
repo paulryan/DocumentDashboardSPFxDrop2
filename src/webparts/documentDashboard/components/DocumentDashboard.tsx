@@ -54,7 +54,7 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
     super();
     this.log = new Logger("DocumentDashboard");
 
-    importableModuleLoader.loadCss("https://appsforoffice.microsoft.com/fabric/2.6.1/fabric.components.min.css");
+    // importableModuleLoader.loadCss("https://appsforoffice.microsoft.com/fabric/2.6.1/fabric.components.min.css");
     importableModuleLoader.loadCss("//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css");
   }
 
