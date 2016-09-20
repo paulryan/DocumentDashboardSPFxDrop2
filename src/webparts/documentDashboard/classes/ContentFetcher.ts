@@ -201,7 +201,7 @@ export default class ContentFetcher implements ISecurableObjectStore {
     }
 
     const selectPropsArray: string[] = ["LastModifiedTime", "Title", "Filename", "ServerRedirectedURL", "Path",
-                                        "FileExtension", "UniqueID", "SharedWithDetails", "SiteTitle", "SiteID",
+                                        "FileExtension", "SharedWithDetails", "SiteTitle", "SiteID",
                                         "EditorOWSUSER", "AuthorOWSUSER"];
     if (this.props.crawlTimeManagedPropertyName) {
       selectPropsArray.push(this.props.crawlTimeManagedPropertyName);
@@ -315,6 +315,13 @@ export default class ContentFetcher implements ISecurableObjectStore {
             const editor: IOwsUser = ParseOWSUSER(doc.EditorOWSUSER);
             const author: IOwsUser = ParseOWSUSER(doc.AuthorOWSUSER);
 
+            // Shorten the key
+            let itemKey: string = doc.Path;
+            const hostIndex: number = doc.Path.toLowerCase().indexOf(location.host);
+            if (hostIndex > -1) {
+              itemKey = (doc.Path as string).substr(hostIndex + location.host.length);
+            }
+
             // Create ISecurableObject from search results
             securableObjects.push({
               title: { data: doc.Filename, displayValue: doc.Filename },
@@ -329,7 +336,7 @@ export default class ContentFetcher implements ISecurableObjectStore {
               crawlTime: { data: crawlTime, displayValue: isCrawlTimeInvalid ? "" : ToColloquialDateString(crawlTime) },
               modifiedBy: { data: editor, displayValue: editor.preferredName },
               createdBy: { data: author, displayValue: author.preferredName },
-              key: doc.UniqueID || doc.Path
+              key: itemKey
             });
           });
         }
