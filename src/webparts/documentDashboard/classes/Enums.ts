@@ -7,7 +7,7 @@ export function GetDisplayTermForEnumSPScope(scope: SPScope): string {
     displayName = "Within this site collection";
   }
   else if (scope === SPScope.Site) {
-    displayName = "Within this site (or child sites)";
+    displayName = "Within this site";
   }
   return displayName;
 }

@@ -147,8 +147,11 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
                 PropertyPaneSlider("limitRowsFetched", {
                   label: "What is the maximum number of items that we should fetch?",
                   min: 500,
-                  max: 50000,
+                  max: 10000,
                   step: 500
+                }),
+                PropertyPaneLabel("limitRowsFetchedNotes", {
+                  text: `Support for much larger datasets is on its way. Please contact Content and Code for more info.`
                 })
               ]
             }
@@ -235,7 +238,7 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
         },
         {
           header: {
-            description: "Miscellaneous"
+            description: "Miscellaneous settings"
           },
           displayGroupsAsAccordion: false,
           groups: [
