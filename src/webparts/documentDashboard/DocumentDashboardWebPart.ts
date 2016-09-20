@@ -92,6 +92,8 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
       chartAxis: this.properties.chartAxis,
       tablePageSize: this.properties.tablePageSize,
       chartAxisOrder: this.properties.chartAxisOrder,
+      showHeading: this.properties.showHeading,
+      showSubHeading: this.properties.showSubHeading,
       domElement: this.domElement
     });
 
@@ -183,12 +185,12 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
             {
               groupName: "How do you want a table to look?",
               groupFields: [
-                PropertyPaneCheckbox("tableColumnsShowSharedWith", {
-                  text: "Should we display 'Shared with' and 'Shared by' columns?"
-                }),
-                PropertyPaneCheckbox("tableColumnsShowCrawledTime", {
-                  text: "Should we display 'Last crawled' column?"
-                }),
+                // PropertyPaneCheckbox("tableColumnsShowSharedWith", {
+                //   text: "Should we display 'Shared with' and 'Shared by' columns?"
+                // }),
+                // PropertyPaneCheckbox("tableColumnsShowCrawledTime", {
+                //   text: "Should we display 'Last crawled' column?"
+                // }),
                 PropertyPaneCheckbox("tableColumnsShowSiteTitle", {
                   text: "Should we display 'Site title' column?"
                 }),
@@ -233,32 +235,59 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
         },
         {
           header: {
-            description: "Settings on this page are for advanced users only"
+            description: "Miscellaneous"
           },
           displayGroupsAsAccordion: false,
           groups: [
             {
-              groupName: "Search schema configuration",
+              groupName: "How do you want the headings to be displayed?",
               groupFields: [
-                PropertyPaneTextField("sharedWithManagedPropertyName", {
-                  label: "What is the name of the queryable Managed Property containing shared with details?",
-                  description: `This property must be configured as such:
-                                Text, Multi, Queryable, Retrievable, and be mapped to 'ows_SharedWithDetails'`
+                PropertyPaneCheckbox("showHeading", {
+                  text: "Should we display the heading?"
                 }),
-                PropertyPaneTextField("crawlTimeManagedPropertyName", {
-                  label: "What is the name of the Managed Property containing crawl time details?",
-                  description: `This property must be configured as such:
-                                Text, Retrievable, and be mapped to 'Internal:323'`
+                PropertyPaneCheckbox("showSubHeading", {
+                  text: "Should we display the sub-heading?"
+                })
+              ]
+            },
+            {
+              groupName: "Content and Code Ltd",
+              groupFields: [
+                PropertyPaneLink("aboutCandCLink", {
+                  href: "https://www.contentandcode.com",
+                  text: "Visit the Content and Code website"
                 }),
-                PropertyPaneLabel("labelproperty01", {
-                  text: "Use the following link to download a search schema file to import the above managed properties:"
-                }),
-                PropertyPaneLink("linkproperty01", {
-                  href: "https://paulwryanspfx.azureedge.net/spfx/DocumentDashboardSearchConfiguration.xml",
-                  text: "Search schema"
+                PropertyPaneLabel("aboutCandC", {
+                  text: `Voted 2016 Microsoft Partner of the Year (Collaboration and Content),
+                  Content and Code are changing the way the world works. We’re creating responsive
+                  organisations and highly engaged workforces. We’ve become one of the most
+                  trusted Microsoft partners by working with our clients to realise measurable
+                  benefits from their Microsoft investment and helping make people’s working lives better`
                 })
               ]
             }
+            // {
+            //   groupName: "Search schema configuration",
+            //   groupFields: [
+            //     PropertyPaneTextField("sharedWithManagedPropertyName", {
+            //       label: "What is the name of the queryable Managed Property containing shared with details?",
+            //       description: `This property must be configured as such:
+            //                     Text, Multi, Queryable, Retrievable, and be mapped to 'ows_SharedWithDetails'`
+            //     }),
+            //     PropertyPaneTextField("crawlTimeManagedPropertyName", {
+            //       label: "What is the name of the Managed Property containing crawl time details?",
+            //       description: `This property must be configured as such:
+            //                     Text, Retrievable, and be mapped to 'Internal:323'`
+            //     }),
+            //     PropertyPaneLabel("labelproperty01", {
+            //       text: "Use the following link to download a search schema file to import the above managed properties:"
+            //     }),
+            //     PropertyPaneLink("linkproperty01", {
+            //       href: "https://paulwryanspfx.azureedge.net/spfx/DocumentDashboardSearchConfiguration.xml",
+            //       text: "Search schema"
+            //     })
+            //   ]
+            // }
           ]
         }
       ]

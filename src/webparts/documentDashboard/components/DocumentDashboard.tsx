@@ -54,7 +54,6 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
     super();
     this.log = new Logger("DocumentDashboard");
 
-    // importableModuleLoader.loadCss("https://appsforoffice.microsoft.com/fabric/2.6.1/fabric.components.min.css");
     importableModuleLoader.loadCss("//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css");
   }
 
@@ -90,19 +89,23 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
     // Reusable components
     const headerControls: JSX.Element = (
       <div>
-        <div className="ms-font-xxl">Document Dashboard</div>
-        <div className="ms-font-l">
-        {
-          GetDisplayTermForEnumMode(this.props.mode) + " "
-          + GetDisplayTermForEnumSPScope(this.props.scope).toLowerCase() + " "
-          + GetDisplayTermForEnumDisplayType(this.props.displayType).toLowerCase()
-        }
         {(() => {
-          if (this.props.displayType !== DisplayType.Table) {
-            return ` (by ${GetDisplayTermForEnumChartAxis(this.props.chartAxis).toLowerCase()})`;
+          if (this.props.showHeading) {
+            return (<div className="ms-font-xxl">Document Dashboard</div>);
           }
         })()}
-        </div>
+        {(() => {
+          if (this.props.showSubHeading) {
+            let subheading: string = GetDisplayTermForEnumMode(this.props.mode) + " "
+                                      + GetDisplayTermForEnumSPScope(this.props.scope).toLowerCase() + " "
+                                      + GetDisplayTermForEnumDisplayType(this.props.displayType).toLowerCase();
+            if (this.props.displayType !== DisplayType.Table) {
+              subheading += ` (by ${GetDisplayTermForEnumChartAxis(this.props.chartAxis).toLowerCase()})`;
+
+            }
+            return (<div className="ms-font-l">{subheading}</div>);
+          }
+        })()}
       </div>
     );
 

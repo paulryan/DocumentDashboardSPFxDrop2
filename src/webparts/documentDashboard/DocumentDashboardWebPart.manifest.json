@@ -12,7 +12,7 @@
       "group": { "default": "Reporting" },
       "title": { "default": "Document Dashboard" },
       "description": { "default": "Perform quick but powerful ad-hoc document reporting tasks" },
-      "officeFabricIconFontName": "Page",
+      "officeFabricIconFontName": "Chart",
       "properties": {
 
         "scope": 1,
@@ -20,11 +20,13 @@
         "displayType": 2,
         "chartAxis": 1,
 
+        "showHeading": true,
+        "showSubHeading": true,
         "noResultsString": "No content was found",
         "limitRowsFetched": 5000,
 
         "tableColumnsShowSharedWith": false,
-        "tableColumnsShowCrawledTime": true,
+        "tableColumnsShowCrawledTime": false,
         "tableColumnsShowSiteTitle": true,
         "tableColumnsShowCreatedByModifiedBy": true,
         "tablePageSize": 20,
