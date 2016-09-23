@@ -95,6 +95,11 @@ export default class DocumentDashboard extends React.Component<IDocumentDashboar
           }
         })()}
         {(() => {
+          if (typeof this.props.customHeading === "string" && this.props.customHeading.length > 0) {
+            return (<div className="ms-font-xxl">{this.props.customHeading}</div>);
+          }
+        })()}
+        {(() => {
           if (this.props.showSubHeading) {
             let subheading: string = GetDisplayTermForEnumMode(this.props.mode) + " "
                                       + GetDisplayTermForEnumSPScope(this.props.scope).toLowerCase() + " "

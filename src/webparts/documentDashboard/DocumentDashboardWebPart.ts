@@ -94,6 +94,7 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
       chartAxisOrder: this.properties.chartAxisOrder,
       showHeading: this.properties.showHeading,
       showSubHeading: this.properties.showSubHeading,
+      customHeading: this.properties.customHeading,
       domElement: this.domElement
     });
 
@@ -250,6 +251,9 @@ export default class DocumentDashboardWebPart extends BaseClientSideWebPart<IDoc
                 }),
                 PropertyPaneCheckbox("showSubHeading", {
                   text: "Should we display the sub-heading?"
+                }),
+                PropertyPaneTextField("customHeading", {
+                  label: "Is there a custom heading we should display?"
                 })
               ]
             },

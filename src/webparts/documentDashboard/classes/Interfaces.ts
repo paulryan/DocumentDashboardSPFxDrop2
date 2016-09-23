@@ -47,6 +47,7 @@ export interface IDocumentDashboardProps {
   chartAxisOrder: ChartAxisOrder;
   showHeading: boolean;
   showSubHeading: boolean;
+  customHeading: string;
   domElement: HTMLElement;
 }
 
@@ -107,6 +108,7 @@ export interface IDocumentDashboardWebPartProps {
   chartAxisOrder: ChartAxisOrder;
   showHeading: boolean;
   showSubHeading: boolean;
+  customHeading: string;
 }
 
 export interface ISearchResponse {

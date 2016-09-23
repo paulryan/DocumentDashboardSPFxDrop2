@@ -22,6 +22,7 @@
 
         "showHeading": true,
         "showSubHeading": true,
+        "customHeading": "",
         "noResultsString": "No content was found",
         "limitRowsFetched": 5000,
 
@@ -29,7 +30,7 @@
         "tableColumnsShowCrawledTime": false,
         "tableColumnsShowSiteTitle": true,
         "tableColumnsShowCreatedByModifiedBy": true,
-        "tablePageSize": 20,
+        "tablePageSize": 10,
         "limitPieChartSegments": 10,
         "limitXAxisPlots": 10,
         "chartAxisOrder": 1,
